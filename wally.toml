@@ -1,10 +1,10 @@
 [package]
-name = "math2"
+name = "nightcycle/math2"
 description = "A lua math library with some added features useful in Roblox game dev"
 version = "1.0.0"
 authors = ["CJ Oyer <coyer@nightcycle.us>"]
 realm = "shared"
-registry = "https://github.com/nightcycle/math2"
+registry = "https://github.com/upliftgames/wally-index"
 exclude = ["Packages", ".vscode"]
 
 [dependencies]
