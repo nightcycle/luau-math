@@ -1,7 +1,7 @@
 [package]
 name = "nightcycle/math2"
 description = "A lua math library with some added features useful in Roblox game dev"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["CJ Oyer <coyer@nightcycle.us>"]
 realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
