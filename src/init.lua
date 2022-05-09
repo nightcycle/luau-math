@@ -1,7 +1,7 @@
 local Math = {}
 function Math:__index(k)
-	if rawget(self, k) then
-		return rawget(self, k)
+	if rawget(Math, k) then
+		return rawget(Math, k)
 	else
 		return math[k]
 	end
@@ -54,4 +54,4 @@ Math.Matrix =  require(script:WaitForChild("Matrix"))
 Math.Vector = require(script:WaitForChild("Vector"))
 Math.Algebra = require(script:WaitForChild("Algebra"))
 
-return Math
+return setmetatable({}, Math)
