@@ -2,40 +2,6 @@
 	A utility useful for working with BasePart related geometry. Vertices are Vector3s, Lines are simply lists with 2 vertices in them. Surfaces are a combination of a direction and a list of lines.
 	@class Geometry
 ]=]
-local BasePartSolver = require(script:WaitForChild("BasePart"))
-local WedgePartSolver = require(script:WaitForChild("WedgePart"))
-local TetraPartSolver = require(script:WaitForChild("TetraPart"))
-local CornerWedgePartSolver = require(script:WaitForChild("CornerWedgePart"))
-
---[[
-	@startuml
-	!theme crt-amber
-	interface Geometry {
-
-	}
-	@enduml
-]]--
-
-
-function round(number, precision)
-	if precision then
-		return math.floor((number/precision) + 0.5) * precision
-	else
-		return math.floor(number + 0.5)
-	end
-end
-
-function getSolver(basePart: BasePart)
-	if basePart:IsA("CornerWedgePart") then
-		return CornerWedgePartSolver
-	elseif basePart:IsA("WedgePart") then
-		return WedgePartSolver
-	elseif basePart:IsA("MeshPart") and basePart.MeshId == "rbxassetid://552212360" then
-		return TetraPartSolver
-	elseif basePart:IsA("BasePart") then
-		return BasePartSolver
-	end
-end
 
 local Geometry = {}
 
@@ -280,6 +246,15 @@ function Geometry.checkIfInList(value, list)
 	return false
 end
 
+
+function round(number, precision)
+	if precision then
+		return math.floor((number/precision) + 0.5) * precision
+	else
+		return math.floor(number + 0.5)
+	end
+end
+
 --[=[
 	@method roundVector3
 	Because Roblox stores Vector3s in pretty high precision, you can sometime see drift between seemingly identical vectors. By rounding them to a less precise increment you increase the chance of not getting a false negative when checking if two are equal.
@@ -312,6 +287,7 @@ function Geometry.getRightAngleVertices(lines: {[string]: {[number]: Vector3}})
 	end
 	return rightAngles
 end
+
 --[=[
 	@method getIntersectionBetweenTwoLines
 	Assembles a list of all vertices which serve as the corners of right angles. If no intersection within line bounds it splits the difference between closest points. Returns nil if parallel.
@@ -499,7 +475,25 @@ function Geometry.getAngleThroughLawOfCos(lineA: {[number]: Vector3}, lineB: {[n
 	local a = Geometry.getLineLength(lineA)
 	local b = Geometry.getLineLength(lineB)
 	local c = Geometry.getLineLength(lineC)
-	return math.acos(((a^2) + (b^2) - (c^2))/(2*a*b))
+	if math.round(1000*(a+b)) == math.round(1000*c) then return 0 end
+	-- print("A", a, "B", b, "C", c)
+	local numerator = (a^2) + (b^2) - (c^2)
+	local denominator = (2*a*b)
+	local frac = numerator/denominator
+	local angle = math.acos(frac)
+
+	-- print("N", numerator, "D", denominator, "F", frac, "A", angle)
+	return angle
+end
+
+
+function Geometry.getAngleBetweenTwoLines(line1, line2)
+	local corner = Geometry.getSharedVertex(line1, line2)
+	local line3 = {
+		if line1[1] == corner then line1[2] else line1[1],
+		if line2[1] == corner then line2[2] else line2[1],
+	}
+	return Geometry.getAngleThroughLawOfCos(line1, line2, line3)
 end
 
 --[=[
@@ -581,6 +575,7 @@ function Geometry.getFarthestPointInList(point, list: {[number]: Vector3})
 	return farthestPoint
 end
 
+
 --[=[
 	@method getClosestPointOnLine
 	Finds the point anywhere along line that's closest to specified point.
@@ -592,10 +587,10 @@ end
 function Geometry.getClosestPointOnLine(vertex: Vector3, line: {[number]: Vector3})
 	local start = line[1]
 	local fin = line[2]
-	local hypF = (vertex - fin).Magnitude
 
 	local angleS = Geometry.getAngleThroughLawOfCos({vertex, start}, line, {vertex, fin})
-	local adjDist =  math.cos(angleS)*(vertex-start).Magnitude
+
+	local adjDist =  math.min(math.cos(angleS)*(vertex-start).Magnitude, (start-fin).Magnitude)
 
 	return start + (fin - start).Unit * adjDist
 end
@@ -708,42 +703,6 @@ function Geometry.getSurfaceLinesFromNormal(basePart: BasePart, norm: Vector3)
 end
 
 --[=[
-	@method getVertices
-	returns a list of all the vertices of the basePart.
-	@within Geometry
-	@param basePart BasePart -- the basePart to get vertices from
-	@return [Vector3]
-]=]
-function Geometry.getVertices(basePart: BasePart)
-	local solver = getSolver(basePart)
-	return solver.getVertices(basePart)
-end
-
---[=[
-	@method getLines
-	returns a list of all the lines of the basePart.
-	@within Geometry
-	@param basePart BasePart -- the basePart to get line vertex lists from
-	@return [Vector3]
-]=]
-function Geometry.getLines(basePart: BasePart)
-	local solver = getSolver(basePart)
-	return solver.getLines(basePart)
-end
-
---[=[
-	@method getSurfaces
-	returns a list of all the surface of the basePart.
-	@within Geometry
-	@param basePart BasePart -- the basePart to get surfaces from
-	@return [Vector3], [[Vector3]] -- returns both the directions, and their associated surface lines
-]=]
-function Geometry.getSurfaces(basePart: BasePart)
-	local solver = getSolver(basePart)
-	return solver.getSurfaces(basePart)
-end
-
---[=[
 	@method export
 	exports a table of properties needed to rebuild part on server side
 	@within Geometry
@@ -792,72 +751,20 @@ function Geometry.getBoxBoundaries(cf: CFrame, size: Vector3)
 	return min, max
 end
 
-function Geometry.isPointWithinBox(point: Vector3, cf: CFrame, size: Vector3, precision: number)
-	local min, max = Geometry.getBoxBoundaries(point, cf, size)
-
-end
-
-function Geometry.getBoundingBoxAtCFrame(orientation: CFrame, parts: {[number]: BasePart})
-	-- print("A")
-	if #parts == 0 then return Vector3.new(0,0,0), CFrame.new(0,0,0) end
-	-- print("B")
-	local minX = math.huge
-	local minY = math.huge
-	local minZ = math.huge
-
-	local maxX = -math.huge
-	local maxY = -math.huge
-	local maxZ = -math.huge
-
-	local vertices = {}
-	for i, part in ipairs(parts) do
-		local partVertices = Geometry.getVertices(part)
-		for j, v3 in ipairs(partVertices) do
-			vertices[(orientation:Inverse() * CFrame.new(v3)).p] = true
-		end
-	end
-	-- print(vertices)
-	for v3, _ in pairs(vertices) do
-		minX = math.min(v3.X, minX)
-		minY = math.min(v3.Y, minY)
-		minZ = math.min(v3.Z, minZ)
-		maxX = math.max(v3.X, maxX)
-		maxY = math.max(v3.Y, maxY)
-		maxZ = math.max(v3.Z, maxZ)
+function Geometry.getPlaneIntersection(point: Vector3, normal: Vector3, planeOrigin: Vector3, planeAxis: Vector3)
+	local rpoint = point - planeOrigin
+	local dot = -math.abs(normal:Dot(planeAxis))
+	if dot == 0 then
+		-- Parallel
+		return point, 0
 	end
 
-	local minV3 = Vector3.new(minX, minY, minZ)
-	local maxV3 = Vector3.new(maxX, maxY, maxZ)
-	-- print("Min", minV3, "Max", maxV3)
-
-	local centerCF = orientation * CFrame.fromMatrix(minV3:Lerp(maxV3, 0.5), orientation.XVector, orientation.YVector, orientation.ZVector)
-	local size = maxV3 - minV3
-	return size, centerCF
+	local dist = -rpoint:Dot(planeAxis) / dot
+	return point + dist * normal, dist
 end
 
 function Geometry.getVolume(size: Vector3)
 	return size.X * size.Y * size.Z
-end
-
-function Geometry.eulerDistance(radA, radB)
-	if radA == radB then return 0 end
-
-	if radA < math.rad(-90) and radB > math.rad(90) then
-		local r1 = radA + math.rad(360)
-		return r1 - radB
-	else
-		return radB - radA
-	end
-end
-
-function Geometry.eulerDistanceV2(aRadV2, bRadV2)
-	local aX = aRadV2.X
-	local bX = bRadV2.X
-	local x = Geometry.eulerDistance(aX, bX)
-	local aY = aRadV2.Y
-	local bY = bRadV2.Y
-	local y = Geometry.eulerDistance(aY, bY)
-	return Vector2.new(x,y).Magnitude
 end
 
 return Geometry

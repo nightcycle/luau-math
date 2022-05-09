@@ -1,5 +1,4 @@
-local Vector = require(script.Parent:WaitForChild("Vector"))
-local Matrix = require(script.Parent:WaitForChild("Matrix"))
+local Vector = require(script.Parent.Parent:WaitForChild("Vector"))
 
 return function()
 	-- describe("Vector", function()

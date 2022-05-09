@@ -1,8 +1,25 @@
 
 local replicatedStorage = game:GetService("ReplicatedStorage")
 
-local surfaceUtils = require(script.Parent:WaitForChild("SurfaceUtils"))
-local draw = require(script.Parent.Parent:WaitForChild("Draw"))
+function getSurfaceCFrame(part, lnormal)
+	local UP = Vector3.new(0, 1, 0)
+	local BACK = Vector3.new(0, 0, 1)
+	local EXTRASPIN = CFrame.fromEulerAnglesXYZ(math.pi/2, 0, 0)
+
+	local function getTranstionBetween(v1, v2, pitchAxis)
+		local dot = v1:Dot(v2)
+		if dot > 0.99999 then
+			return CFrame.new()
+		elseif dot < -0.99999 then
+			return CFrame.fromAxisAngle(pitchAxis, math.pi)
+		end
+		return CFrame.fromAxisAngle(v1:Cross(v2), math.acos(dot))
+	end
+	
+	local transition = getTranstionBetween(UP, lnormal, BACK)
+	return part.CFrame * transition * EXTRASPIN
+end
+
 
 function getWorldPosition(part:BasePart, offset: Vector3)
 	return (part.CFrame * CFrame.new(offset*Vector3.new(1,1,1))).p
@@ -77,11 +94,11 @@ function module.getSurfaces(cornerWedge: CornerWedgePart)
 	local angle2 = math.atan2(opposite, cornerWedge.Size.X)
 
 	local vector = {
-		top = surfaceUtils.getSurfaceCFrame(cornerWedge, Vector3.new(0,0,1):Lerp(Vector3.new(0,1,0), math.cos(angle))).LookVector,
-		bottom = surfaceUtils.getSurfaceCFrame(cornerWedge, Vector3.new(0,-1,0)).LookVector,
-		west = surfaceUtils.getSurfaceCFrame(cornerWedge, Vector3.new(1,0,0)).LookVector,
-		east = surfaceUtils.getSurfaceCFrame(cornerWedge, Vector3.new(-1,0,0):Lerp(Vector3.new(0,1,0), math.cos(angle2))).LookVector,
-		south = surfaceUtils.getSurfaceCFrame(cornerWedge, Vector3.new(0,0,-1)).LookVector,
+		top = getSurfaceCFrame(cornerWedge, Vector3.new(0,0,1):Lerp(Vector3.new(0,1,0), math.cos(angle))).LookVector,
+		bottom = getSurfaceCFrame(cornerWedge, Vector3.new(0,-1,0)).LookVector,
+		west = getSurfaceCFrame(cornerWedge, Vector3.new(1,0,0)).LookVector,
+		east = getSurfaceCFrame(cornerWedge, Vector3.new(-1,0,0):Lerp(Vector3.new(0,1,0), math.cos(angle2))).LookVector,
+		south = getSurfaceCFrame(cornerWedge, Vector3.new(0,0,-1)).LookVector,
 	}
 
 	local surfaceLines = {}

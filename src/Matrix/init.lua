@@ -123,59 +123,59 @@ function Matrix:GetDeterminant()
 	return det
 end
 
-function Matrix:GetEigen()
-	-- https://www.youtube.com/watch?v=PFDu9oVAE-g
+-- function Matrix:GetEigen()
+-- 	-- https://www.youtube.com/watch?v=PFDu9oVAE-g
 
 
-	local determinant = self:GetDeterminant()
+-- 	local determinant = self:GetDeterminant()
 
-	local function lambdaTry(lambda: number)
-		local lMatrix = Matrix.identity(self.Dimensions)*lambda
-		local dif = self - lMatrix
-		return dif:GetDeterminant()
-	end
+-- 	local function lambdaTry(lambda: number)
+-- 		local lMatrix = Matrix.identity(self.Dimensions)*lambda
+-- 		local dif = self - lMatrix
+-- 		return dif:GetDeterminant()
+-- 	end
 
-	local function lambdaCheck(lambda: number)
-		return lambdaTry(lambda) == 0
-	end
+-- 	local function lambdaCheck(lambda: number)
+-- 		return lambdaTry(lambda) == 0
+-- 	end
 
-	local function getEigenValues() --(x11-lambda)(x22-lambda)(x33etc-lambda) = 0
-		local values = {}
-		for x, column in ipairs(self:GetVectors()) do
-			for y, scal in ipairs(column:GetScalars()) do
-				if y == x then
-					if lambdaCheck(scal) and scal ~= 0 then
-						table.insert(values, scal)
-					end
-				end
-			end
-		end
-		return values
-	end
+-- 	local function getEigenValues() --(x11-lambda)(x22-lambda)(x33etc-lambda) = 0
+-- 		local values = {}
+-- 		for x, column in ipairs(self:GetVectors()) do
+-- 			for y, scal in ipairs(column:GetScalars()) do
+-- 				if y == x then
+-- 					if lambdaCheck(scal) and scal ~= 0 then
+-- 						table.insert(values, scal)
+-- 					end
+-- 				end
+-- 			end
+-- 		end
+-- 		return values
+-- 	end
 
 
-	local function vectorTry(vector,  lambda)
-		local lMatrix = Matrix.identity(self.Dimensions)*lambda
-		return vector*(self-lMatrix)
-	end
+-- 	local function vectorTry(vector,  lambda)
+-- 		local lMatrix = Matrix.identity(self.Dimensions)*lambda
+-- 		return vector*(self-lMatrix)
+-- 	end
 
-	local function vectorCheck()
-		return vectorTry.Magnitude == 0
-	end
+-- 	local function vectorCheck()
+-- 		return vectorTry.Magnitude == 0
+-- 	end
 
-	local function getEigenVectors(eigVals)
-		local vectors = {}
-		for i, lambda in ipairs(eigVals) do
-			-- local lMatrix = Matrix.identity(self.Dimensions)*lambda
-			-- lamda * ? * self = 0
-		end
-		return vectors
-	end
-	local eigenValues = getEigenValues()
-	local eigenVectors = getEigenVectors(eigenValues)
+-- 	local function getEigenVectors(eigVals)
+-- 		local vectors = {}
+-- 		for i, lambda in ipairs(eigVals) do
+-- 			-- local lMatrix = Matrix.identity(self.Dimensions)*lambda
+-- 			-- lamda * ? * self = 0
+-- 		end
+-- 		return vectors
+-- 	end
+-- 	local eigenValues = getEigenValues()
+-- 	local eigenVectors = getEigenVectors(eigenValues)
 
-	return eigenVectors, eigenValues
-end
+-- 	return eigenVectors, eigenValues
+-- end
 
 function Matrix:__add(v) --add
 	local sum = {}
@@ -226,15 +226,7 @@ function Matrix:__mul(v) --multiply
 
 			return product
 		elseif v.Type == "Vector" then
-			local product = {}
-			for x, val in ipairs(v:GetScalars()) do
-				product[x] = product[x] or {}
-				for y, row in ipairs(self:GetRows()) do
-					product[x][y] = product[x][y] or 0
-					product[x][y] += val*row[x]
-				end
-			end
-			-- @TODO convert back into matrix and return
+			error("Currently vector x matrix multiplication isn't supported")
 		end
 	elseif typeof(v) == "number" then
 		local result = {}

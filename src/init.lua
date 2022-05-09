@@ -48,10 +48,10 @@ function Math.round(v, weight)
 	end
 end
 
-Math.Easing = require(script:WaitForChild("Easing"))
 Math.Geometry = require(script:WaitForChild("Geometry"))
 Math.Mesh = require(script:WaitForChild("Mesh"))
 Math.Matrix =  require(script:WaitForChild("Matrix"))
 Math.Vector = require(script:WaitForChild("Vector"))
+Math.Algebra = require(script:WaitForChild("Algebra"))
 
 return Math
