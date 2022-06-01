@@ -1,7 +1,11 @@
+--!strict
+
 --imagine a vector2 or 3, except unlimited dimensions
 local Vector = {}
 
-function Vector:__index(k)
+type number = number
+
+function Vector:__index(k: any)
 	if k == "_scalars" then error("Don't try to index private variables") end
 	if k == "Unit" then
 		local maxScalar = 0
@@ -18,11 +22,11 @@ function Vector:__index(k)
 	end
 end
 
-function Vector:__newindex(k,v)
+function Vector:__newindex(k: any,v: number)
 	error("You can't change values of this vector post-construction")
 end
 
-function Vector:__add(v) --add
+function Vector:__add(v: Vector) --add
 	local sum = {}
 	for i, s in ipairs(rawget(self, "_scalars")) do
 		if type(v) == "table" and v.Type == "Vector" then
@@ -250,14 +254,15 @@ function Vector.new(...)
 	local self = {}
 
 	self._scalars = {...}
-	self.Size = #self._scalars
-	self.Type = "Vector"
+	self.Size :: number = #self._scalars
+	self.Type :: string = "Vector"
 
-	self.Magnitude = 0
+	self.Magnitude = 0 :: number
 
 	--iterate through each scalar value, solving the hypotenuse of each new dimension
-	local function solveMagnitude(i, prevHyp)
+	local function solveMagnitude(i: number | nil, prevHyp: number | nil): number
 		i = i or 1
+		assert(i ~= nil)
 		i += 1
 		local a = prevHyp or self._scalars[i-1]
 		local b = self._scalars[i]
@@ -267,11 +272,13 @@ function Vector.new(...)
 			return a
 		end
 	end
-	solveMagnitude()
+	self.Magnitude = solveMagnitude()
 
 	setmetatable(self, Vector)
 
 	return self
 end
+
+export type Vector = typeof(Vector.new(0,0))
 
 return Vector

@@ -1,0 +1,174 @@
+{
+  "name": "test-environment",
+  "className": "DataModel",
+  "filePaths": [
+    "test.project.json"
+  ],
+  "children": [
+    {
+      "name": "ReplicatedStorage",
+      "className": "ReplicatedStorage",
+      "children": [
+        {
+          "name": "Packages",
+          "className": "Folder",
+          "children": [
+            {
+              "name": "_Index",
+              "className": "Folder",
+              "children": [
+                {
+                  "name": "nightcycle_boat-graph@1.0.2",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "boat-graph",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "Packages\\_Index\\nightcycle_boat-graph@1.0.2\\boat-graph\\src\\init.lua",
+                        "Packages\\_Index\\nightcycle_boat-graph@1.0.2\\boat-graph\\default.project.json"
+                      ],
+                      "children": [
+                        {
+                          "name": "Graph.story",
+                          "className": "ModuleScript",
+                          "filePaths": [
+                            "Packages\\_Index\\nightcycle_boat-graph@1.0.2\\boat-graph\\src\\Graph.story.lua"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "maid",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "Packages\\_Index\\nightcycle_boat-graph@1.0.2\\maid.lua"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "quenty_maid@2.0.1-canary.140ed9d6.1",
+                  "className": "Folder",
+                  "children": [
+                    {
+                      "name": "maid",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "Packages\\_Index\\quenty_maid@2.0.1-canary.140ed9d6.1\\maid\\src\\init.lua",
+                        "Packages\\_Index\\quenty_maid@2.0.1-canary.140ed9d6.1\\maid\\default.project.json"
+                      ],
+                      "children": [
+                        {
+                          "name": "Shared",
+                          "className": "Folder",
+                          "children": [
+                            {
+                              "name": "Maid",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "Packages\\_Index\\quenty_maid@2.0.1-canary.140ed9d6.1\\maid\\src\\Shared\\Maid.lua"
+                              ]
+                            },
+                            {
+                              "name": "MaidTaskUtils",
+                              "className": "ModuleScript",
+                              "filePaths": [
+                                "Packages\\_Index\\quenty_maid@2.0.1-canary.140ed9d6.1\\maid\\src\\Shared\\MaidTaskUtils.lua"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "graph",
+              "className": "ModuleScript",
+              "filePaths": [
+                "Packages\\graph.lua"
+              ]
+            },
+            {
+              "name": "my-package",
+              "className": "ModuleScript",
+              "filePaths": [
+                "src\\init.lua"
+              ],
+              "children": [
+                {
+                  "name": "Algebra",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src\\Algebra\\init.lua"
+                  ]
+                },
+                {
+                  "name": "Geometry",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src\\Geometry.lua"
+                  ]
+                },
+                {
+                  "name": "Math.test",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src\\Math.test.lua"
+                  ]
+                },
+                {
+                  "name": "Mesh",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src\\Mesh\\init.lua"
+                  ],
+                  "children": [
+                    {
+                      "name": "CornerWedgePart",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src\\Mesh\\CornerWedgePart.lua"
+                      ]
+                    },
+                    {
+                      "name": "Part",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src\\Mesh\\Part.lua"
+                      ]
+                    },
+                    {
+                      "name": "TetraPart",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src\\Mesh\\TetraPart.lua"
+                      ]
+                    },
+                    {
+                      "name": "WedgePart",
+                      "className": "ModuleScript",
+                      "filePaths": [
+                        "src\\Mesh\\WedgePart.lua"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Types",
+                  "className": "ModuleScript",
+                  "filePaths": [
+                    "src\\Types.lua"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

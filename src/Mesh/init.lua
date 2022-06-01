@@ -1,37 +1,48 @@
+--!strict
 local Mesh = {}
 
-local BasePartSolver = require(script:WaitForChild("BasePart"))
+local types = require(script.Parent.Types)
+type Point = types.Point
+type Vertex = types.Vertex
+type Normal = types.Normal
+type Axis = types.Axis
+type Line = types.Line
+type Surface = types.Surface
+type Face = types.Face
+
+local PartSolver = require(script:WaitForChild("Part"))
 local WedgePartSolver = require(script:WaitForChild("WedgePart"))
 local TetraPartSolver = require(script:WaitForChild("TetraPart"))
 local CornerWedgePartSolver = require(script:WaitForChild("CornerWedgePart"))
 
-function getSolver(basePart: BasePart)
+function getSolver(basePart: BasePart): (BasePart) -> any|nil
+	local result: any
 	if basePart:IsA("CornerWedgePart") then
-		return CornerWedgePartSolver
+		result = CornerWedgePartSolver
 	elseif basePart:IsA("WedgePart") then
-		return WedgePartSolver
+		result = WedgePartSolver
 	elseif basePart:IsA("MeshPart") and basePart.MeshId == "rbxassetid://552212360" then
-		return TetraPartSolver
+		result = TetraPartSolver
 	elseif basePart:IsA("BasePart") then
-		return BasePartSolver
+		result = PartSolver
 	end
+	return result
 end
 
-function Mesh.getVertices(basePart: BasePart)
-	local solver = getSolver(basePart)
+function Mesh.getVertices(basePart: BasePart): {[number]: Vertex}
+	local solver:any = getSolver(basePart)
 	return solver.getVertices(basePart)
 end
 
-function Mesh.getLines(basePart: BasePart)
-	local solver = getSolver(basePart)
+function Mesh.getLines(basePart: BasePart): {[string]: Line}
+	local solver:any = getSolver(basePart)
 	return solver.getLines(basePart)
 end
 
-function Mesh.getSurfaces(basePart: BasePart)
-	local solver = getSolver(basePart)
+function Mesh.getSurfaces(basePart: BasePart): {[Face]: Surface}
+	local solver:any = getSolver(basePart)
 	return solver.getSurfaces(basePart)
 end
-
 
 function Mesh.solveGreedyMesh(grid: {[Vector3]: boolean})
 	-- print("Grid", grid)
@@ -161,6 +172,7 @@ end
 
 function Mesh.getBoundingBox(parts: {[number]: BasePart}, worldCF: CFrame | nil)
 	worldCF = worldCF or CFrame.new(0,0,0)
+	assert(worldCF ~= nil)
 	local minX
 	local minY
 	local minZ

@@ -1,3 +1,5 @@
+--!strict
+
 local Math = {}
 function Math:__index(k)
 	if rawget(Math, k) then
@@ -7,51 +9,54 @@ function Math:__index(k)
 	end
 end
 
---[[
-	@startuml
-	!theme crt-amber
-	interface Math {
-		+ round(value: number, weight: number | nil)
-	}
-	@enduml
-]]--
+local types = require(script:WaitForChild("Types"))
+export type Point = types.Point
+export type Vertex = types.Vertex
+export type Normal = types.Normal
+export type Axis = types.Axis
+export type Direction = types.Direction
+export type Line = types.Line
+export type Surface = types.Surface
+export type Radian = types.Radian
+export type Degree = types.Degree
+export type Face = types.Face
+export type Roundable = types.Roundable
 
-
-function Math.round(v, weight)
-	weight = weight or 1
+function Math.round(v: Roundable, interval: number) : Roundable | nil
+	interval = interval or 1
+	local result: Roundable | nil
 	if typeof(v) == "number" then
-		return math.round(v/weight)*weight
+		result = math.round(v/interval)*interval
 	elseif typeof(v) == "Vector2" then
-		return Vector2.new(
-			Math.round(v.X, weight),
-			Math.round(v.Y, weight)
+		result = Vector2.new(
+			Math.round(v.X, interval) :: number,
+			Math.round(v.Y, interval) :: number
 		)
 	elseif typeof(v) == "Vector3" then
-		return Vector3.new(
-			Math.round(v.X, weight),
-			Math.round(v.Y, weight),
-			Math.round(v.Z, weight)
+		result = Vector3.new(
+			Math.round(v.X, interval) :: number,
+			Math.round(v.Y, interval) :: number,
+			Math.round(v.Z, interval) :: number
 		)
 	elseif typeof(v) == "Color3" then
-		return Color3.new(
-			Math.round(v.R, weight),
-			Math.round(v.G, weight),
-			Math.round(v.B, weight)
+		result = Color3.new(
+			Math.round(v.R, interval) :: number,
+			Math.round(v.G, interval) :: number,
+			Math.round(v.B, interval) :: number
 		)
 	elseif typeof(v) == "CFrame" then
-		return CFrame.fromMatrix(
-			Math.round(v.Position, weight),
-			Math.round(v.XVector, weight),
-			Math.round(v.YVector, weight),
-			Math.round(v.ZVector, weight)
+		result = CFrame.fromMatrix(
+			Math.round(v.Position, interval) :: Vector3,
+			Math.round(v.XVector, interval) :: Vector3,
+			Math.round(v.YVector, interval) :: Vector3,
+			Math.round(v.ZVector, interval) :: Vector3
 		)
 	end
+	return result
 end
 
 Math.Geometry = require(script:WaitForChild("Geometry"))
 Math.Mesh = require(script:WaitForChild("Mesh"))
-Math.Matrix =  require(script:WaitForChild("Matrix"))
-Math.Vector = require(script:WaitForChild("Vector"))
 Math.Algebra = require(script:WaitForChild("Algebra"))
 
 return setmetatable({}, Math)

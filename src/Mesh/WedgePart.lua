@@ -1,33 +1,39 @@
 
-local replicatedStorage = game:GetService("ReplicatedStorage")
-
-function getSurfaceCFrame(part, lnormal)
+--!strict
+local types = require(script.Parent.Parent.Types)
+type Point = types.Point
+type Vertex = types.Vertex
+type Normal = types.Normal
+type Axis = types.Axis
+type Line = types.Line
+type Surface = types.Surface
+type Face = types.Face
+function getSurfaceCFrame(part: BasePart, lnormal: Normal): CFrame
 	local UP = Vector3.new(0, 1, 0)
 	local BACK = Vector3.new(0, 0, 1)
 	local EXTRASPIN = CFrame.fromEulerAnglesXYZ(math.pi/2, 0, 0)
 
-	local function getTranstionBetween(v1, v2, pitchAxis)
-		local dot = v1:Dot(v2)
+	local function getTranstionBetween(a: Normal, b: Normal, pitchAxis: Axis)
+		local dot: number = a:Dot(b)
 		if dot > 0.99999 then
 			return CFrame.new()
 		elseif dot < -0.99999 then
 			return CFrame.fromAxisAngle(pitchAxis, math.pi)
 		end
-		return CFrame.fromAxisAngle(v1:Cross(v2), math.acos(dot))
+		return CFrame.fromAxisAngle(a:Cross(b), math.acos(dot))
 	end
 	
-	local transition = getTranstionBetween(UP, lnormal, BACK)
+	local transition: CFrame = getTranstionBetween(UP, lnormal, BACK)
 	return part.CFrame * transition * EXTRASPIN
 end
 
-
-function getWorldPosition(part:BasePart, offset: Vector3)
-	return (part.CFrame * CFrame.new(offset*Vector3.new(1,1,-1))).p
+function getWorldPosition(part:BasePart, offset: Vector3): Point
+	return (part.CFrame * CFrame.new(offset*Vector3.new(-1,1,1))).p
 end
 
 local module = {}
 
-function module.getVertices(wedge: WedgePart)
+function module.getVertices(wedge: BasePart): {[number]: Vertex}
 	local x = wedge.Size.X/2
 	local y = wedge.Size.Y/2
 	local z = wedge.Size.Z/2
@@ -44,7 +50,7 @@ function module.getVertices(wedge: WedgePart)
 	}
 end
 
-function module.getLines(wedge: WedgePart)
+function module.getLines(wedge: BasePart): {[string]: Line}
 	local x = wedge.Size.X/2
 	local y = wedge.Size.Y/2
 	local z = wedge.Size.Z/2
@@ -89,40 +95,41 @@ function module.getLines(wedge: WedgePart)
 	}
 end
 
-function module.getSurfaces(wedge: WedgePart)
+function module.getSurfaces(wedge: BasePart): {[Face]:Surface}
 	local lines = module.getLines(wedge)
-	local surfaces = {}
 
 	local opposite = wedge.Size.Y
 	local adjacent = wedge.Size.Z
 	local angle = math.atan2(opposite, adjacent)
 
 	local vector = {
-		top = getSurfaceCFrame(wedge, Vector3.new(0,0,-1):Lerp(Vector3.new(0,1,0), math.cos(angle))).LookVector,
-		bottom = getSurfaceCFrame(wedge, Vector3.new(0,-1,0)).LookVector,
-		west = getSurfaceCFrame(wedge, Vector3.new(-1,0,0)).LookVector,
-		east = getSurfaceCFrame(wedge, Vector3.new(1,0,0)).LookVector,
-		south = getSurfaceCFrame(wedge, Vector3.new(0,0,1)).LookVector,
+		Top = getSurfaceCFrame(wedge, Vector3.new(0,0,-1):Lerp(Vector3.new(0,1,0), math.cos(angle))).LookVector,
+		Bottom = getSurfaceCFrame(wedge, Vector3.new(0,-1,0)).LookVector,
+		Left = getSurfaceCFrame(wedge, Vector3.new(-1,0,0)).LookVector,
+		Right = getSurfaceCFrame(wedge, Vector3.new(1,0,0)).LookVector,
+		Back = getSurfaceCFrame(wedge, Vector3.new(0,0,1)).LookVector,
 	}
 
-	local surfaceLines = {}
-	local surfaceDirection = {}
+	local surfaces: {[Face]: Surface} = {}
+	
 	for k, surfaceLineKeys in pairs({
-		top = {"sTerrace", "nBorder", "eTerrace", "wTerrace"},
-		bottom = {"sBorder", "nBorder", "eBorder", "wBorder"},
-		east = {"seColumn", "eBorder", "eTerrace"},
-		west = {"swColumn", "wBorder", "wTerrace"},
-		south = {"seColumn", "swColumn", "sBorder", "sTerrace"},
+		Top = {"sTerrace", "nBorder", "eTerrace", "wTerrace"},
+		Bottom = {"sBorder", "nBorder", "eBorder", "wBorder"},
+		Right = {"seColumn", "eBorder", "eTerrace"},
+		Left = {"swColumn", "wBorder", "wTerrace"},
+		Back = {"seColumn", "swColumn", "sBorder", "sTerrace"},
 	}) do
 		local surfaceSpecificLines = {}
 		for i, bondKey in pairs(surfaceLineKeys) do
 			table.insert(surfaceSpecificLines, lines[bondKey])
 		end
-		surfaceDirection[k] = vector[k]
-		surfaceLines[k] = surfaceSpecificLines
+		surfaces[k] = {
+			Normal = vector[k],
+			Lines = surfaceSpecificLines
+		} :: Surface
 	end
 
-	return surfaceDirection, surfaceLines
+	return surfaces
 end
 
 return module

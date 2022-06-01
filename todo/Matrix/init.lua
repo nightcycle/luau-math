@@ -1,6 +1,40 @@
+--!strict
+
 -- imagine a cframe that works with unlimited dimensions
 local Matrix = {}
+
 local Vector = require(script.Parent:WaitForChild("Vector"))
+
+type Vector = {
+	GetScalars: () -> {[number]: number},
+	Type: string,
+	__add: () -> Vector,
+	[number]: number,
+}
+
+function Matrix.new(...: Vector): Matrix
+	local self = {}
+
+	self._vectors: {[number]: Vector} = {...}
+	-- print(self._vectors)
+	local xDim: number = #self._vectors
+	local yDim: number = self._vectors[1].Size
+
+	self.Dimensions = Vector.new(xDim, yDim)
+
+	self.Type = "Matrix"
+
+	self.Magnitude = 0
+	for i, vec in ipairs(self._vectors) do
+		self.Magnitude += vec.Magnitude
+	end
+
+	setmetatable(self, Matrix)
+
+	return self
+end
+
+export type Matrix = typeof(Matrix.new(Vector.new(0,0), Vector.new(0,0)))
 
 function Matrix:__index(k)
 	if k == "_vectors" then error("Don't try to index private variables") end
@@ -11,7 +45,16 @@ function Matrix:__newindex(k,v)
 	error("You can't change values of this vector post-construction")
 end
 
-function Matrix:GetDeterminant()
+function Matrix:ToVectors(): {[number]: Vector}
+	local vecs = {}
+	for i, vec in ipairs(rawget(self, "_vectors")) do
+		table.insert(vecs, vec)
+	end
+	return vecs
+end
+
+
+function Matrix:GetDeterminant(): number
 	-- https://github.com/davidm/lua-matrix/blob/master/lua/matrix.lua
 	--[[
 		LICENSE
@@ -33,17 +76,35 @@ function Matrix:GetDeterminant()
 	end
 	
 	if size == 2 then
-		return self[1][1]*self[2][2] - self[2][1]*self[1][2]
+		local v11: number = self[1][1]
+		local v22: number = self[2][2]
+		local v21: number = self[2][1]
+		local v12: number = self[1][2]
+		return v11*v22 - v21*v12
 	end
 	
 	if size == 3 then
+		local v11: number = self[1][1]
+		local v12: number = self[1][2]
+		local v13: number = self[1][3]
+
+		local v21: number = self[2][1]
+		local v22: number = self[2][2]
+		local v23: number = self[2][3]
+
+	
+		local v31: number = self[3][1]
+		local v32: number = self[2][3]
+		local v33: number = self[3][3]
+
+
 		return (
-			self[1][1]*self[2][2]*self[3][3]
-			+ self[1][2]*self[2][3]*self[3][1]
-			+ self[1][3]*self[2][1]*self[3][2]
-			- self[1][3]*self[2][2]*self[3][1]
-			- self[1][1]*self[2][3]*self[3][2]
-			- self[1][2]*self[2][1]*self[3][3]
+			v11*v22*v33
+			+ v12*v23*v31
+			+ v13*v21*v32
+			- v13*v22*v31
+			- v11*v23*v32
+			- v12*v21*v33
 		)
 	end
 	
@@ -57,8 +118,9 @@ function Matrix:GetDeterminant()
 		-- using Gauss elimination and Laplace
 		-- start eliminating from below better for removals
 		-- get copy of matrix, set initial determinant
-	local mtx = {}
-	for i, vec in ipairs(self:GetVectors()) do
+	local mtx: {[number]: {[number]: number}} = {}
+	local vecs: {[number]: Vector} = self:ToVectors()
+	for i, vec: Vector in ipairs(vecs) do
 		for j, scalar in ipairs(vec:GetScalars()) do
 			mtx[j] = mtx[j] or {}
 			mtx[j][i] = scalar
@@ -123,98 +185,66 @@ function Matrix:GetDeterminant()
 	return det
 end
 
--- function Matrix:GetEigen()
--- 	-- https://www.youtube.com/watch?v=PFDu9oVAE-g
-
-
--- 	local determinant = self:GetDeterminant()
-
--- 	local function lambdaTry(lambda: number)
--- 		local lMatrix = Matrix.identity(self.Dimensions)*lambda
--- 		local dif = self - lMatrix
--- 		return dif:GetDeterminant()
--- 	end
-
--- 	local function lambdaCheck(lambda: number)
--- 		return lambdaTry(lambda) == 0
--- 	end
-
--- 	local function getEigenValues() --(x11-lambda)(x22-lambda)(x33etc-lambda) = 0
--- 		local values = {}
--- 		for x, column in ipairs(self:GetVectors()) do
--- 			for y, scal in ipairs(column:GetScalars()) do
--- 				if y == x then
--- 					if lambdaCheck(scal) and scal ~= 0 then
--- 						table.insert(values, scal)
--- 					end
--- 				end
--- 			end
--- 		end
--- 		return values
--- 	end
-
-
--- 	local function vectorTry(vector,  lambda)
--- 		local lMatrix = Matrix.identity(self.Dimensions)*lambda
--- 		return vector*(self-lMatrix)
--- 	end
-
--- 	local function vectorCheck()
--- 		return vectorTry.Magnitude == 0
--- 	end
-
--- 	local function getEigenVectors(eigVals)
--- 		local vectors = {}
--- 		for i, lambda in ipairs(eigVals) do
--- 			-- local lMatrix = Matrix.identity(self.Dimensions)*lambda
--- 			-- lamda * ? * self = 0
--- 		end
--- 		return vectors
--- 	end
--- 	local eigenValues = getEigenValues()
--- 	local eigenVectors = getEigenVectors(eigenValues)
-
--- 	return eigenVectors, eigenValues
--- end
-
-function Matrix:__add(v) --add
-	local sum = {}
-	for i, s in ipairs(rawget(self, "_vectors")) do
-		if typeof(v) == "table" and v.Type == "Matrix" then	
-			sum[i] = s + v[i]
+function Matrix:__add(vMatVec: Matrix | Vector) --add
+	local sumVectors: {[number]: Vector} = {}
+	for i, mVec: Vector in ipairs(rawget(self, "_vectors")) do
+		local vType: string = vMatVec.Type
+		local vVecOrVal: Vector | number = vMatVec[i]
+		if typeof(v) == "table" and vType == "Matrix" then
+			assert(typeof(vVecOrVal) ~= "number")
+			local vVec: Vector = vVecOrVal
+			local sumVec: Vector = mVec + vVec
+			sumVectors[i] = sumVec
 		else
-			sum[i] = s + v
+			assert(typeof(vVecOrVal) == "number")
+			local val:number = vVecOrVal
+			local sumVec: Vector = mVec + val
+			sumVectors[i] = sumVec
 		end
 	end
-	return Matrix.new(unpack(sum))
+	return Matrix.new(unpack(sumVectors))
 end
 
-function Matrix:__sub(v) --subtract
-	local difference = {}
-	for i, s in ipairs(rawget(self, "_vectors")) do
-		if typeof(v) == "table" and v.Type == "Matrix" then
-			difference[i] = s - v[i]
+function Matrix:__sub(vMatVec: Matrix | Vector) --add
+	local difVectors: {[number]: Vector} = {}
+	for i, mVec: Vector in ipairs(rawget(self, "_vectors")) do
+		local vType: string = vMatVec.Type
+		local vVecOrVal: Vector | number = vMatVec[i]
+		if typeof(v) == "table" and vType == "Matrix" then
+			assert(typeof(vVecOrVal) ~= "number")
+			local vVec: Vector = vVecOrVal
+			local difVec: Vector = mVec + vVec
+			difVectors[i] = difVec
 		else
-			difference[i] = s - v
+			assert(typeof(vVecOrVal) == "number")
+			local val:number = vVecOrVal
+			local difVec: Vector = mVec + val
+			difVectors[i] = difVec
 		end
 	end
-	return Matrix.new(unpack(difference))
+	return Matrix.new(unpack(difVectors))
 end
 
-function Matrix:__mul(v) --multiply
-	if typeof(v) == "table" then
-		if v.Type == "Matrix" then
+function Matrix:__mul(vMatVecNum: Matrix | Vector | number) --multiply
+	local result: Matrix
+	if typeof(vMatVecNum) == "table" then
+		assert(vMatVecNum.Type == "Matrix" or vMatVecNum.Type == "Vector")
+		if vMatVecNum.Type == "Matrix" then
+			local vMatrix: Matrix = vMatVecNum
+
 			assert(self.Dimensions[1] == self.Dimensions[2], "Bad square matrix")
-			assert(v.Dimensions == self.Dimensions, "Bad matrix match")
+			assert(vMatrix.Dimensions == self.Dimensions, "Bad matrix match")
+			
 			local product = {}
-			local vColumns = v:ToVectors()
+			local vColumns: {[number]: Vector} = vMatrix:ToVectors()
 
 			for y, row in ipairs(self:ToRows()) do
 				local baseWeights = row:ToScalars()
 				product[y] = product[y] or {}
 				for x, _ in ipairs(baseWeights) do
 					local sum = 0
-					local multWeights = vColumns[x]:ToScalars()
+					local vec: Vector = vColumns[x]
+					local multWeights = vec:ToScalars()
 					for i, bScal in ipairs(baseWeights) do
 						sum += bScal * multWeights[i]
 					end
@@ -222,21 +252,22 @@ function Matrix:__mul(v) --multiply
 				end
 				product[y] = Vector.new(unpack(product[y]))
 			end
-			product = Matrix.fromRows(unpack(product))
-
-			return product
-		elseif v.Type == "Vector" then
+			result = Matrix.new(unpack(product)):Transpose()
+		elseif vMatVecNum.Type == "Vector" then
+			local vVector: Vector = vMatVecNum
 			error("Currently vector x matrix multiplication isn't supported")
 		end
 	elseif typeof(v) == "number" then
-		local result = {}
+		local vNum: number = vMatVecNum
+		local vecs = {}
 		for i, s in ipairs(rawget(self, "_vectors")) do
-			result[i] = s * v
+			vecs[i] = s * vNum
 		end
-		return Matrix.new(unpack(result))
+		result = Matrix.new(unpack(vecs))
 	else
 		error("Bad value")
 	end
+	return result
 end
 
 function Matrix:__div(v) --divide
@@ -301,14 +332,6 @@ function Matrix:__eq(v) --equal
 	end
 end
 
-function Matrix:ToVectors()
-	local vecs = {}
-	for i, vec in ipairs(rawget(self, "_vectors")) do
-		table.insert(vecs, vec)
-	end
-	return vecs
-end
-
 function Matrix:ToRows()
 	local rows = {}
 	for i, vec in ipairs(rawget(self, "_vectors")) do
@@ -324,12 +347,13 @@ function Matrix:ToRows()
 	return rows
 end
 
-function Matrix:Transpose()
+
+function Matrix:Transpose(): Matrix
 	local vectors = self:ToRows()
 	return Matrix.new(unpack(vectors))
 end
 
-function Matrix:__tostring()
+function Matrix:__tostring(): string
 	local str = ""
 	local rows = self:ToRows()
 	for i, row in ipairs(rows) do
@@ -349,13 +373,7 @@ function Matrix:__tostring()
 	return str
 end
 
-function Matrix.fromRows(...)
-	local orig = Matrix.new(...)
-
-	return orig:Transpose()
-end
-
-function Matrix.one(dimensions)
+function Matrix.one(dimensions): Vector
 	local vecs = {}
 	for i=1, dimensions[1] do
 		table.insert(vecs, Vector.one(dimensions[2]))
@@ -363,7 +381,7 @@ function Matrix.one(dimensions)
 	return Vector.new(unpack(vecs))
 end
 
-function Matrix.identity(dimensions)
+function Matrix.identity(dimensions): Vector
 	local vecs = {}
 	for i=1, dimensions[1] do
 		table.insert(vecs, Vector.identity(dimensions[2], i))
@@ -371,21 +389,5 @@ function Matrix.identity(dimensions)
 	return Vector.new(unpack(vecs))
 end
 
-function Matrix.new(...)
-	local self = {}
-
-	self._vectors = {...}
-	-- print(self._vectors)
-	self.Dimensions = Vector.new(#self._vectors, self._vectors[1].Size)
-	self.Type = "Matrix"
-	self.Magnitude = 0
-	for i, vec in ipairs(self._vectors) do
-		self.Magnitude += vec.Magnitude
-	end
-
-	setmetatable(self, Matrix)
-
-	return self
-end
 
 return Matrix
