@@ -1,4 +1,13 @@
 
+local types = require(script.Parent.Types)
+export type Point = types.Point
+export type Vertex = types.Vertex
+export type Normal = types.Normal
+export type Axis = types.Axis
+export type Direction = types.Direction
+export type Line = types.Line
+export type Radian = types.Radian
+
 local typeLerps = {} :: {[string]: (v1: any, v2: any, a: number) -> any}
 
 function lerp(value1: any, value2: any, alpha: number):  any --written by CJ_Oyer, 2022
@@ -240,7 +249,20 @@ typeLerps = {
 local Algebra = {
 	lerp = function(a: any, b: any, alpha: number) : any
 		return lerp(a, b, alpha)
-	end
+	end,
+	bezier = function(p0: Point, p1: Point, p2: Point, count: number): {[number]: Point}
+		local function solve(a)
+			local q0 = lerp(p0, p1, a)
+			local q1 = lerp(p1, p2, a)
+			return lerp(q0, q1, a)
+		end
+
+		local points = {p0}
+		for i=1, count do
+			table.insert(points, solve(i/count))
+		end
+		return points
+	end,
 }
 
 return Algebra

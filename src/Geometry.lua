@@ -167,8 +167,8 @@ function Geometry.getIntersectionBetweenTwoLines(line1: Line, line2: Line): Poin
 
 	local startSeparation: number = (start1-start2).Magnitude
 	local stepSeparation: number = (step1-step2).Magnitude
-	local separationSlope : number = ((stepSeparation - startSeparation)/(step1-start1)).Magnitude
-
+	local separationSlope : number = (stepSeparation - startSeparation)/((step1-start1).Magnitude)
+	
 	local result: Point | nil
 	if separationSlope < 0 then --getting closer
 		 local distance: number = -startSeparation/separationSlope
