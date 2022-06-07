@@ -15,7 +15,7 @@ type Vector = {
 function Matrix.new(...: Vector): Matrix
 	local self = {}
 
-	self._vectors: {[number]: Vector} = {...}
+	self._vectors = {...} :: {[number]: Vector}
 	-- print(self._vectors)
 	local xDim: number = #self._vectors
 	local yDim: number = self._vectors[1].Size
@@ -34,7 +34,6 @@ function Matrix.new(...: Vector): Matrix
 	return self
 end
 
-export type Matrix = typeof(Matrix.new(Vector.new(0,0), Vector.new(0,0)))
 
 function Matrix:__index(k)
 	if k == "_vectors" then error("Don't try to index private variables") end
@@ -190,7 +189,7 @@ function Matrix:__add(vMatVec: Matrix | Vector) --add
 	for i, mVec: Vector in ipairs(rawget(self, "_vectors")) do
 		local vType: string = vMatVec.Type
 		local vVecOrVal: Vector | number = vMatVec[i]
-		if typeof(v) == "table" and vType == "Matrix" then
+		if typeof(vVecOrVal) == "table" and vType == "Matrix" then
 			assert(typeof(vVecOrVal) ~= "number")
 			local vVec: Vector = vVecOrVal
 			local sumVec: Vector = mVec + vVec
@@ -210,7 +209,7 @@ function Matrix:__sub(vMatVec: Matrix | Vector) --add
 	for i, mVec: Vector in ipairs(rawget(self, "_vectors")) do
 		local vType: string = vMatVec.Type
 		local vVecOrVal: Vector | number = vMatVec[i]
-		if typeof(v) == "table" and vType == "Matrix" then
+		if typeof(vVecOrVal) == "table" and vType == "Matrix" then
 			assert(typeof(vVecOrVal) ~= "number")
 			local vVec: Vector = vVecOrVal
 			local difVec: Vector = mVec + vVec
@@ -255,9 +254,17 @@ function Matrix:__mul(vMatVecNum: Matrix | Vector | number) --multiply
 			result = Matrix.new(unpack(product)):Transpose()
 		elseif vMatVecNum.Type == "Vector" then
 			local vVector: Vector = vMatVecNum
-			error("Currently vector x matrix multiplication isn't supported")
+			local vScals: {[number]: number} = vVector:GetScalars()
+			result = {}
+			for i, mVec in ipairs(rawget(self, "_vectors")) do
+				local v = vScals[i]
+				result[i] = 0
+				for j, s in ipairs(mVec:GetScalars()) do
+					result[i] += v * s
+				end
+			end
 		end
-	elseif typeof(v) == "number" then
+	elseif typeof(vMatVecNum) == "number" then
 		local vNum: number = vMatVecNum
 		local vecs = {}
 		for i, s in ipairs(rawget(self, "_vectors")) do
@@ -388,6 +395,8 @@ function Matrix.identity(dimensions): Vector
 	end
 	return Vector.new(unpack(vecs))
 end
+
+export type Matrix = typeof(Matrix.new(Vector.new(0,0), Vector.new(0,0)))
 
 
 return Matrix

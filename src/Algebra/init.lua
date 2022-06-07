@@ -14,10 +14,10 @@ function lerp(value1: any, value2: any, alpha: number):  any --written by CJ_Oye
 	assert(typeof(value1) == typeof(value2), "Type mismatch")
 	assert(typeof(alpha) == "number", "Bad alpha")
 
-	local solver = typeLerps[typeof(value1)] or function() 
+	local solver = typeLerps[typeof(value1)] or function()
 		return value1:Lerp(value2, alpha)
 	end
-	local result: any = solver()
+	local result: any = solver(value1, value2, alpha)
 	return result
 end
 
@@ -39,13 +39,13 @@ function sequence(seq1: NumberSequence | ColorSequence, seq2: NumberSequence | C
 				-- Calculate how far alpha lies between the points
 				local a = (keyT - this.Time) / (next.Time - this.Time)
 				-- Evaluate the real value between the points using alpha
-				if typeof(s) == "ColorSequence" then
+				if typeof(seq) == "ColorSequence" then
 					result = Color3.new(
 						(next.Value.R - this.Value.R) * a + this.Value.R,
 						(next.Value.G - this.Value.G) * a + this.Value.G,
 						(next.Value.B - this.Value.B) * a + this.Value.B
 					)
-				elseif typeof(s) == "NumberSequence" then
+				elseif typeof(seq) == "NumberSequence" then
 					result = (next.Value - this.Value) * a + this.Value
 				end
 				break
@@ -116,7 +116,7 @@ end
 
 typeLerps = {
 	["number"] = function(v1: number, v2: number, alpha: number): number
-		return (v1 - v1)*alpha + v1 
+		return (v2 - v1)*alpha + v1
 	end,
 	["string"] = function(s1: string, s2: string, alpha: number): string
 		local len = math.max(string.len(s1), string.len(s2))
@@ -190,7 +190,7 @@ typeLerps = {
 	end,
 	["PathWaypoint"] = function(p1:PathWaypoint, p2:PathWaypoint, alpha: number): PathWaypoint
 		local position: Vector3 = lerp(p1.Position, p2.Position, alpha)
-		local action: EnumPathWaypointAction = lerp(p1.Action, p2.Action, alpha)
+		local action = lerp(p1.Action, p2.Action, alpha)
 		return PathWaypoint.new(position, action)
 	end,
 	["PhysicalProperties"] = function(p1 : PhysicalProperties, p2 : PhysicalProperties, alpha: number): PhysicalProperties	
@@ -263,6 +263,8 @@ local Algebra = {
 		end
 		return points
 	end,
+	Vector = require(script:WaitForChild("Vector")),
+	Matrix = require(script:WaitForChild("Matrix")),
 }
 
 return Algebra

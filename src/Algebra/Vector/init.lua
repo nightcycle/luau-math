@@ -3,8 +3,6 @@
 --imagine a vector2 or 3, except unlimited dimensions
 local Vector = {}
 
-type number = number
-
 function Vector:__index(k: any)
 	if k == "_scalars" then error("Don't try to index private variables") end
 	if k == "Unit" then
@@ -136,24 +134,20 @@ end
 
 function Vector:__tostring()
 	local scalars = self:ToScalars()
-	local str = ""
-	for i, v in ipairs(scalars) do
+	local str = "["
+	for i=1, self.Size do
+		local v = scalars[i]
 		if i ~= 1 then
-			str = str.."\n"
+			str  ..= ""
 		end
-		str = str..tostring(v)..","
+		str ..= ""..tostring(v)..""
+		if i < self.Size then
+			str ..= ","
+		end
 	end
-	return str
+	return str.."]"
 end
 
-function Vector:Round(pow)
-	local newScalars = {}
-	local weight = 10^(pow or 0)
-	for i, s in ipairs(rawget(self, "_scalars")) do
-		newScalars[i] = math.round(s * weight)/weight
-	end
-	return Vector.new(unpack(newScalars))
-end
 
 function Vector:ToScalars()
 	local result = {}
@@ -163,7 +157,20 @@ function Vector:ToScalars()
 	return result
 end
 
-function Vector:Floor(pow)
+function Vector:Round(pow: number | nil)
+	assert(typeof(pow) == "number" or pow == nil)
+	pow = pow or 0
+	local newScalars = {}
+	local weight = 10^pow
+	for i, s in ipairs(rawget(self, "_scalars")) do
+		newScalars[i] = math.round(s * weight)/weight
+	end
+	return Vector.new(unpack(newScalars))
+end
+
+function Vector:Floor(pow: number | nil)
+	assert(typeof(pow) == "number" or pow == nil)
+	pow = pow or 0
 	local newScalars = {}
 	local weight = 10^(pow or 0)
 	for i, s in ipairs(rawget(self, "_scalars")) do
@@ -172,7 +179,9 @@ function Vector:Floor(pow)
 	return Vector.new(unpack(newScalars))
 end
 
-function Vector:Ceil(pow)
+function Vector:Ceil(pow: number | nil)
+	assert(typeof(pow) == "number" or pow == nil)
+	pow = pow or 0
 	local newScalars = {}
 	local weight = 10^(pow or 0)
 	for i, s in ipairs(rawget(self, "_scalars")) do
@@ -182,14 +191,59 @@ function Vector:Ceil(pow)
 end
 
 
--- @TODO
-function Vector:Cross()
+function Vector:Cross(other: Vector): Vector
+	assert(other ~= nil, "Bad other")
+	assert(type(other) == "table")
+	assert(other.Size == self.Size, "Size mismatch")
 
+	if self.Size == 3 then --https://gist.github.com/Xeoncross/9511295
+		local aX, aY, aZ = self[1], self[2], self[3]
+		local bX, bY, bZ = other[1], other[2], other[3]
+		local x,y,z
+
+		z = aX*bY - bX*aY
+		x = aY*bZ - bY*aZ
+		y = aZ*bX - bZ*aX
+
+		return Vector.new(x,y,z)
+	elseif self.Size == 3 then
+		local x1, x2, x3, x4, x5, x6, x7 = self[1], self[2], self[3], self[4], self[5], self[6], self[7]
+		local y1, y2, y3, y4, y5, y6, y7 = other[1], other[2], other[3], other[4], other[5], other[6], other[7]
+
+		local e1 = (x2*y4 - x4*y2 + x3*y7- x7*y3 + x5*y6 + x6*y6)
+		local e2 = (x3*y5 - x5*y3 + x4*y1 - x1*y4 + x6*y7 - x7*y6)
+		local e3 = (x4*y6 - x6*y4 + x5*y2 - x2*y5 + x7*y1 - x1*y7)
+		local e4 = (x5*y7 - x7*y5 +x6*y3 - x3*y6 + x1*y2 - x2*y1)
+		local e5 = (x6*y1 - x1*y6 + x7*y4 - x4*y7 + x2*y3 - x3*y2)
+		local e6 = (x7*y2 - x2*y7 + x1*y5 - x5*y1 + x3*y4 - x3*y3)
+		local e7 = (x1*y3 - x3*y1 + x2*y6 - x6*y2 + x4*y5 - x5*y4)
+
+		return Vector.new(e1,e2,e3,e4,e5,e6,e7)
+	else
+		error("Cross products are currently only supported in the 3rd and 7th dimension")
+	end
 end
 
--- @TODO
-function Vector:Dot()
+function Vector:Dot(other: Vector): Vector
+	assert(other ~= nil, "Bad other")
+	assert(type(other) == "table")
+	assert(other.Size == self.Size, "Size mismatch")
 
+	local result = {}
+	for i=1, self.Size do
+		result[i] = self[i] * other[i]
+	end
+
+	return Vector.new(unpack(result))
+end
+
+function Vector:ScalarDot(other: Vector): number
+	local product = self:Dot(other)
+	local sum = 0
+	for i, v in ipairs(product:ToScalars()) do
+		sum += v
+	end
+	return sum
 end
 
 function Vector:Lerp(goal, alpha)
@@ -254,25 +308,14 @@ function Vector.new(...)
 	local self = {}
 
 	self._scalars = {...}
-	self.Size :: number = #self._scalars
-	self.Type :: string = "Vector"
+	self.Size = #self._scalars :: number
+	self.Type = "Vector" :: string
 
 	self.Magnitude = 0 :: number
-
-	--iterate through each scalar value, solving the hypotenuse of each new dimension
-	local function solveMagnitude(i: number | nil, prevHyp: number | nil): number
-		i = i or 1
-		assert(i ~= nil)
-		i += 1
-		local a = prevHyp or self._scalars[i-1]
-		local b = self._scalars[i]
-		if b then
-			return solveMagnitude(i, (a^2 + b^2)^2)
-		else
-			return a
-		end
+	for i, s in ipairs(self._scalars) do
+		self.Magnitude += s^2
 	end
-	self.Magnitude = solveMagnitude()
+	self.Magnitude = math.sqrt(self.Magnitude)
 
 	setmetatable(self, Vector)
 
