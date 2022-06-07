@@ -58,5 +58,6 @@ end
 Math.Geometry = require(script:WaitForChild("Geometry"))
 Math.Mesh = require(script:WaitForChild("Mesh"))
 Math.Algebra = require(script:WaitForChild("Algebra"))
+Math.Noise = require(script:WaitForChild("Noise"))
 
 return setmetatable({}, Math)
