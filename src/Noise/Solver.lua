@@ -59,14 +59,22 @@ end
 
 function Solver:ToMatrix(size: number)
 	local vecs = {}
+	local totalDuration = 0
+	local totalSolves = 0
 	for x=1, size do
 		-- if x%5 == 0 then task.wait() end
 		local values = {}
 		for y=1, size do
+			local start = tick()
 			values[y] = self:Get(Vector.new(x-1,y-1)/size)
+			totalDuration += tick() - start
+			totalSolves += 1
 		end
 		vecs[x] = Vector.new(unpack(values))
 	end
+
+	print("Average cell compute duration: "..tostring(math.round(1000000*totalDuration/totalSolves)/1000000))
+
 	return Matrix.new(unpack(vecs))
 end
 
@@ -75,6 +83,7 @@ function Solver:Debug(parentGui: Frame, scale: number | nil, rMatrix: Matrix, gM
 	scale = scale or 1
 	gMatrix = gMatrix or rMatrix
 	bMatrix = bMatrix or gMatrix
+
 
 	for x, vec in ipairs(rMatrix:ToVectors()) do
 		for y, r in ipairs(vec:ToScalars()) do

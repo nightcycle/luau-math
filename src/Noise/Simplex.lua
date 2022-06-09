@@ -16,6 +16,14 @@ Simplex.__index = Simplex
 function Simplex:Get(vec: Vector): number
 	vec = self.translateVector(vec)
 
+	if vec.Size <= 3 then
+		math.randomseed(self.Seed)
+		local x = self.Frequency*(vec[1] or 0)
+		local y = self.Frequency*(vec[2] or 0)
+		local z = self.Frequency*(vec[3] or 0)
+		return 0.5 + math.noise(x,y,z)*0.5
+	end
+
 	local sideLength: number = 1/self.Frequency
 	local minPoint: Vector = (vec/sideLength):Floor()*sideLength
 	local limit: Vector = Vector.one(vec.Size)*sideLength
