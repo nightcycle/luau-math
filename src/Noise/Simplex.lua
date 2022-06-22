@@ -21,7 +21,8 @@ function Simplex:Get(vec: Vector): number
 		local x = self.Frequency*(vec[1] or 0)
 		local y = self.Frequency*(vec[2] or 0)
 		local z = self.Frequency*(vec[3] or 0)
-		return 0.5 + math.noise(x,y,z)*0.5
+		local base = 0.5 + math.noise(x,y,z)*0.5
+		return self:_Compile(vec, base)
 	end
 
 	local sideLength: number = 1/self.Frequency

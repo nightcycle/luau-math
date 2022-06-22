@@ -134,7 +134,52 @@ typeLerps = {
 			return v1
 		else
 			return v2
-		end 
+		end
+	end,
+	["Color3"] = function(c1: Color3, c2: Color3, alpha: number)
+		-- Converts a Color3 in RGB space to a Vector3 in Oklab space.
+		local function to(rgb: Color3): Vector3
+			local l = rgb.R * 0.4122214708 + rgb.G * 0.5363325363 + rgb.B * 0.0514459929
+			local m = rgb.R * 0.2119034982 + rgb.G * 0.6806995451 + rgb.B * 0.1073969566
+			local s = rgb.R * 0.0883024619 + rgb.G * 0.2817188376 + rgb.B * 0.6299787005
+
+			local lRoot = l ^ (1/3)
+			local mRoot = m ^ (1/3)
+			local sRoot = s ^ (1/3)
+
+			return Vector3.new(
+				lRoot * 0.2104542553 + mRoot * 0.7936177850 - sRoot * 0.0040720468,
+				lRoot * 1.9779984951 - mRoot * 2.4285922050 + sRoot * 0.4505937099,
+				lRoot * 0.0259040371 + mRoot * 0.7827717662 - sRoot * 0.8086757660
+			)
+		end
+
+		-- Converts a Vector3 in CIELAB space to a Color3 in RGB space.
+		-- The Color3 will be clamped by default unless specified otherwise.
+		local function from(lab: Vector3, unclamped: boolean?): Color3
+			local lRoot = lab.X + lab.Y * 0.3963377774 + lab.Z * 0.2158037573
+			local mRoot = lab.X - lab.Y * 0.1055613458 - lab.Z * 0.0638541728
+			local sRoot = lab.X - lab.Y * 0.0894841775 - lab.Z * 1.2914855480
+
+			local l = lRoot ^ 3
+			local m = mRoot ^ 3
+			local s = sRoot ^ 3
+
+			local red = l * 4.0767416621 - m * 3.3077115913 + s * 0.2309699292
+			local green = l * -1.2684380046 + m * 2.6097574011 - s * 0.3413193965
+			local blue = l * -0.0041960863 - m * 0.7034186147 + s * 1.7076147010
+
+			if not unclamped then
+				red = math.clamp(red, 0, 1)
+				green = math.clamp(green, 0, 1)
+				blue = math.clamp(blue, 0, 1)
+			end
+
+			return Color3.new(red, green, blue)
+		end
+		local vec1 = to(c1)
+		local vec2 = to(c2)
+		return from(vec1:Lerp(vec2, alpha))
 	end,
 	["BrickColor"] = function(b1: BrickColor, b2: BrickColor, alpha: number): BrickColor
 		local c1: Color3 = Color3.new(b1.r, b1.g, b1.b)
@@ -245,10 +290,276 @@ typeLerps = {
 	end,
 }
 
+-- Prescribed Material design Beziers and optimized Robert Penner functions
+-- @rostrap EasingFunctions
+-- @author Robert Penner
+
+--[[
+	Disclaimer for Robert Penner's Easing Equations license:
+
+	TERMS OF USE - EASING EQUATIONS
+
+	Open source under the BSD License.
+
+	Copyright © 2001 Robert Penner
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+	* Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+	* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+	* Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+	IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+	OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+]]
+
+-- For all easing functions:
+-- t = elapsed time
+-- b = beginning value
+-- c = change in value same as: ending - beginning
+-- d = duration (total time)
+
+-- Where applicable
+-- a = amplitude
+-- p = period
+
+local sin, cos, pi, abs, asin = math.sin, math.cos, math.pi, math.abs, math.asin
+local _2pi = 2 * pi
+local _halfpi = 0.5 * pi
+
+local function outBounce(t, b, c, d): number
+	t = t / d
+	if t < 1 / 2.75 then
+		return c * (7.5625 * t * t) + b
+	elseif t < 2 / 2.75 then
+		t = t - (1.5 / 2.75)
+		return c * (7.5625 * t * t + 0.75) + b
+	elseif t < 2.5 / 2.75 then
+		t = t - (2.25 / 2.75)
+		return c * (7.5625 * t * t + 0.9375) + b
+	else
+		t = t - (2.625 / 2.75)
+		return c * (7.5625 * t * t + 0.984375) + b
+	end
+end
+
+local function inBounce(t, b, c, d): number
+	return c - outBounce(d - t, 0, c, d) + b
+end
+
+local EasingFunctions = {
+	[Enum.EasingStyle.Sine] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			return -c * cos(t / d * _halfpi) + c + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			return -c * 0.5 * (cos(pi * t / d) - 1) + b
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			return c * sin(t / d * _halfpi) + b
+		end
+	},
+	[Enum.EasingStyle.Quint] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			t = t / d
+			return c * t * t * t * t * t + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			t = t / d * 2
+			if t < 1 then
+				return c * 0.5 * t * t * t * t * t + b
+			else
+				t = t - 2
+				return c * 0.5 * (t * t * t * t * t + 2) + b
+			end
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			t = t / d - 1
+			return c * (t * t * t * t * t + 1) + b
+		end
+	},
+	[Enum.EasingStyle.Quart] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			t = t / d
+			return c * t * t * t * t + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			t = t / d * 2
+			if t < 1 then
+				return c * 0.5 * t * t * t * t + b
+			else
+				t = t - 2
+				return -c * 0.5 * (t * t * t * t - 2) + b
+			end
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			t = t / d - 1
+			return -c * (t * t * t * t - 1) + b
+		end
+	},
+	[Enum.EasingStyle.Quad] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			t = t / d
+			return c * t * t + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			t = t / d * 2
+			return t < 1 and c * 0.5 * t * t + b or -c * 0.5 * ((t - 1) * (t - 3) - 1) + b
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			t = t / d
+			return -c * t * (t - 2) + b
+		end
+	},
+	[Enum.EasingStyle.Linear] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			return c * t / d + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			return c * t / d + b
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			return c * t / d + b
+		end
+	},
+	[Enum.EasingStyle.Exponential] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			return t == 0 and b or c * 2 ^ (10 * (t / d - 1)) + b - c * 0.001
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			t = t / d * 2
+			return t == 0 and b or t == 2 and b + c or t < 1 and c * 0.5 * 2 ^ (10 * (t - 1)) + b - c * 0.0005 or c * 0.5 * 1.0005 * (2 - 2 ^ (-10 * (t - 1))) + b
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			return t == d and b + c or c * 1.001 * (1 - 2 ^ (-10 * t / d)) + b
+		end
+	},
+	[Enum.EasingStyle.Elastic] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			t = t / d - 1
+			local a = 1
+			local p = d * 0.3
+			return t == -1 and b or t == 0 and b + c or (not a or a < abs(c)) and -(c * 2 ^ (10 * t) * sin((t * d - p * .25) * _2pi / p)) + b or -(a * 2 ^ (10 * t) * sin((t * d - p / _2pi * asin(c/a)) * _2pi / p)) + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			if t == 0 then
+				return b
+			end
+		
+			t = t / d * 2 - 1
+		
+			if t == 1 then
+				return b + c
+			end
+		
+			local a = 1
+			local p = d * 0.3
+		
+			local s
+		
+			if not a or a < abs(c) then
+				a = c
+				s = p * .25
+			else
+				s = p / _2pi * asin(c / a)
+			end
+		
+			if t < 1 then
+				return -0.5 * a * 2 ^ (10 * t) * sin((t * d - s) * _2pi / p) + b
+			else
+				return a * 2 ^ (-10 * t) * sin((t * d - s) * _2pi / p ) * 0.5 + c + b
+			end
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			t = t / d
+			local a = 1
+			local p = d * 0.3
+			return t == 0 and b or t == 1 and b + c or (not a or a < abs(c)) and c * 2 ^ (-10 * t) * sin((t * d - p * .25) * _2pi / p) + c + b or a * 2 ^ (-10 * t) * sin((t * d - p / _2pi * asin(c / a)) * _2pi / p) + c + b
+		end
+	},
+	[Enum.EasingStyle.Cubic] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			t = t / d
+			return c * t * t * t + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			t = t / d * 2
+			if t < 1 then
+				return c * 0.5 * t * t * t + b
+			else
+				t = t - 2
+				return c * 0.5 * (t * t * t + 2) + b
+			end
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			t = t / d - 1
+			return c * (t * t * t + 1) + b
+		end
+	},
+	[Enum.EasingStyle.Circular] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			t = t / d
+			return -c * ((1 - t * t) ^ 0.5 - 1) + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			t = t / d * 2
+			if t < 1 then
+				return -c * 0.5 * ((1 - t * t) ^ 0.5 - 1) + b
+			else
+				t = t - 2
+				return c * 0.5 * ((1 - t * t) ^ 0.5 + 1) + b
+			end
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			t = t / d - 1
+			return c * (1 - t * t) ^ 0.5 + b
+		end
+	},
+	[Enum.EasingStyle.Bounce] = {
+		[Enum.EasingDirection.In] = inBounce,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			if t < d * 0.5 then
+				return inBounce(t * 2, 0, c, d) * 0.5 + b
+			else
+				return outBounce(t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b
+			end
+		end,
+		[Enum.EasingDirection.Out] = outBounce,
+	},
+	[Enum.EasingStyle.Back] = {
+		[Enum.EasingDirection.In] = function(t, b, c, d)
+			local s = 1.70158
+			t = t / d
+			return c * t * t * ((s + 1) * t - s) + b
+		end,
+		[Enum.EasingDirection.InOut] = function(t, b, c, d)
+			local s = 1.70158 * 1.525
+			t = t / d * 2
+			if t < 1 then
+				return c * 0.5 * (t * t * ((s + 1) * t - s)) + b
+			else
+				t = t - 2
+				return c * 0.5 * (t * t * ((s + 1) * t + s) + 2) + b
+			end
+		end,
+		[Enum.EasingDirection.Out] = function(t, b, c, d)
+			local s = 1.70158
+			t = t / d - 1
+			return c * (t * t * ((s + 1) * t + s) + 1) + b
+		end
+	},
+}
 
 local Algebra = {
 	lerp = function(a: any, b: any, alpha: number) : any
 		return lerp(a, b, alpha)
+	end,
+	ease = function(alpha: number, easingStyle: EnumItem, easingDirection: EnumItem)
+		easingStyle = easingStyle or Enum.EasingStyle.Quad
+		easingDirection = easingDirection or Enum.EasingDirection.InOut
+		return EasingFunctions[easingStyle][easingDirection](alpha, 0, 1, 1)
 	end,
 	bezier = function(p0: Point, p1: Point, p2: Point, count: number): {[number]: Point}
 		local function solve(a)

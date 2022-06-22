@@ -73,7 +73,7 @@ function Solver:ToMatrix(size: number)
 		vecs[x] = Vector.new(unpack(values))
 	end
 
-	print("Average cell compute duration: "..tostring(math.round(1000000*totalDuration/totalSolves)/1000000))
+	-- print("Average cell compute duration: "..tostring(math.round(1000000*totalDuration/totalSolves)/1000000))
 
 	return Matrix.new(unpack(vecs))
 end
