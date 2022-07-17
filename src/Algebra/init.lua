@@ -561,18 +561,25 @@ local Algebra = {
 		easingDirection = easingDirection or Enum.EasingDirection.InOut
 		return EasingFunctions[easingStyle][easingDirection](alpha, 0, 1, 1)
 	end,
-	bezier = function(p0: Point, p1: Point, p2: Point, count: number): {[number]: Point}
-		local function solve(a)
-			local q0 = lerp(p0, p1, a)
-			local q1 = lerp(p1, p2, a)
-			return lerp(q0, q1, a)
+	bezier = function(...)
+		local allPoints: {[number]: Vector3 | Vector2} = {...}
+		local function solve(alpha: number, points: {[number]: Vector2 | Vector3})
+			local newPoints = {}
+			for i=1, #points - 1 do
+				local a = points[i]
+				local b = points[i+1]
+				table.insert(newPoints, lerp(a, b, alpha))
+			end
+			if #newPoints <= 1 then
+				return newPoints[1]
+			else
+				return solve(alpha, newPoints)
+			end
 		end
 
-		local points = {p0}
-		for i=1, count do
-			table.insert(points, solve(i/count))
+		return function(alpha)
+			return solve(alpha, allPoints)
 		end
-		return points
 	end,
 	Vector = require(script:WaitForChild("Vector")),
 	Matrix = require(script:WaitForChild("Matrix")),

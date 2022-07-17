@@ -151,32 +151,12 @@ function Geometry.getRightAngleVertices(lines: {[string]: Line}): {[number]: Ver
 end
 
 function Geometry.getIntersectionBetweenTwoLines(line1: Line, line2: Line): Point | nil
-	local start1: Vertex = line1[1]
-	local start2: Vertex = line2[1]
-	
-	local finish1: Vertex = line1[2]
-	local finish2: Vertex = line2[2]
+	local p1 = Geometry.getClosestPointToLineOnLine(line1, line2)
+	if not p1 then return end
+	local p2 = Geometry.getClosestPointToLineOnLine(line2, line1)
+	if not p2 then return end
 
-	local step = 0.01
-
-	local direction1: Normal = (finish1 - start1).Unit
-	local direction2: Normal = (finish2 - start2).Unit
-
-	local step1: Vector3 = start1 + direction1 * step
-	local step2: Vector3 = start2 + direction2 * step
-
-	local startSeparation: number = (start1-start2).Magnitude
-	local stepSeparation: number = (step1-step2).Magnitude
-	local separationSlope : number = (stepSeparation - startSeparation)/((step1-start1).Magnitude)
-	
-	local result: Point | nil
-	if separationSlope < 0 then --getting closer
-		 local distance: number = -startSeparation/separationSlope
-		 result = start1 + direction1 * distance
-	elseif separationSlope > 0 then --getting farther
-		result = start1
-	end
-	return result
+	return p1:Lerp(p2, 0.5)
 end
 
 function Geometry.getVertexOppositePointsFromLines(lines: {[any]: Line}): {[Vertex]: Point}
@@ -422,6 +402,43 @@ function Geometry.getPlaneIntersection(point: Point, normal: Normal, planeOrigin
 
 	local dist: number = -rpoint:Dot(planeAxis) / dot
 	return point + dist * normal, dist
+end
+
+
+function Geometry.getNonPerpindicularNormal(normal: Normal)
+	local result = normal:Cross(Vector3.new(0,1,0))
+	if math.abs(result:Dot(normal)) == 1 then
+		result = normal:Cross(Vector3.new(1,0,0))
+	end
+	return result
+end
+
+function Geometry.getSideLengthThroughLawOfSin(a: Radian, b:Radian, line: Line)
+	return (line[2] - line[1]).Magnitude * math.sin(a) / math.sin(b)
+end
+
+function Geometry.getClosestPointToLineOnLine(line1: Line, line2: Line): Point | nil
+	local ori = line1[1]
+	local dir = line1[2] - line1[1]
+	local norm = dir.Unit
+
+	local oppOri = line2[1]
+	local oppDir = line2[2] - line2[1]
+	local oppNorm = oppDir.Unit
+	if oppNorm:Dot(norm) > 0 then
+		oppOri = line2[2]
+		oppDir = line2[1] - line2[2]
+		oppNorm = oppDir.Unit
+	end
+
+	local dist = (oppOri - ori).Magnitude
+	local connectionLine = {ori, oppOri}
+	local angle1 = Geometry.getAngleBetweenTwoLines(connectionLine, line1)
+	local angle2 = Geometry.getAngleBetweenTwoLines(connectionLine, line2)
+	local oppAngle = angle2
+	local adjAngle = math.rad(180) - angle2 - angle1
+	local sideLen = Geometry.getSideLengthThroughLawOfSin(oppAngle, adjAngle, connectionLine)
+	return ori + norm * math.clamp(sideLen, 0, dir.Magnitude)
 end
 
 function Geometry.getVolume(size: Vector3): number
