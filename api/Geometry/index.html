@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="plugin-moonwave plugin-id-moonwave">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="generator" content="Docusaurus v2.0.0-beta.21">
+<title data-rh="true">Geometry | Math</title><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://nightcycle.github.io/luau-math/api/Geometry"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="Geometry | Math"><meta data-rh="true" name="description" content="A long list of geometry related functions. Consider rounding your vectors to the nearest hundredth as the smallest difference can fail an equality test."><meta data-rh="true" property="og:description" content="A long list of geometry related functions. Consider rounding your vectors to the nearest hundredth as the smallest difference can fail an equality test."><link data-rh="true" rel="icon" href="/luau-math/favicon.ico"><link data-rh="true" rel="canonical" href="https://nightcycle.github.io/luau-math/api/Geometry"><link data-rh="true" rel="alternate" href="https://nightcycle.github.io/luau-math/api/Geometry" hreflang="en"><link data-rh="true" rel="alternate" href="https://nightcycle.github.io/luau-math/api/Geometry" hreflang="x-default"><link rel="stylesheet" href="/luau-math/assets/css/styles.a379a752.css">
+<link rel="preload" href="/luau-math/assets/js/runtime~main.31e8107f.js" as="script">
+<link rel="preload" href="/luau-math/assets/js/main.e5435c94.js" as="script">
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
+<div role="region"><a href="#" class="skipToContent_fXgn">Skip to main content</a></div><nav class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Navigation bar toggle" class="navbar__toggle clean-btn" type="button" tabindex="0"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/luau-math/"><b class="navbar__title text--truncate">Math</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/luau-math/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/nightcycle/luau-math" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_lCJq"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="searchBox_ZlJk"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input type="search" id="search_input_react" placeholder="Press S to Search..." aria-label="Search" class="navbar__search-input search-bar"></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div class="main-wrapper docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Algebra">​Algebra</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/luau-math/api/Geometry">​Geometry</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Math">​Math</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Matrix">​Matrix</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Mesh">​Mesh</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Noise">​Noise</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/NoiseSolver">​Noise​Solver</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Vector">​Vector</a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">Geometry</span></h1><div class="luaClassTags_EipM"></div><div>
+<p>A long list of geometry related functions. Consider rounding your vectors to the nearest hundredth as the smallest difference can fail an equality test.</p>
+</div></header><h2 class="anchor anchorWithStickyNavbar_LWe7" id="properties">Properties<a class="hash-link" href="#properties" title="Direct link to heading">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="phi"><code style="text-decoration:none">phi</code><a class="hash-link" href="#phi" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L37"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.<!-- -->phi<!-- -->:<!-- --> </code> <code class="blue_P4bS">number</code></div><div>
+<p>It's a constant, no need to keep resolving for it.</p>
+</div><h2 class="anchor anchorWithStickyNavbar_LWe7" id="functions">Functions<a class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getLineLengths"><code style="text-decoration:none">getLineLengths</code><a class="hash-link" href="#getLineLengths" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L45"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getLineLengths</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">}</code></div><div>
+<p>
+  Gets length of line.
+  Performs getLineLength on a list of lines.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getLineCenters"><code style="text-decoration:none">getLineCenters</code><a class="hash-link" href="#getLineCenters" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L59"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getLineCenters</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Point</code><code class="purple_ieR2">}</code></div><div>
+<p>
+  Gets a point at center of line.
+  Performs getLineCenter on a list of lines.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getLineAxes"><code style="text-decoration:none">getLineAxes</code><a class="hash-link" href="#getLineAxes" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L73"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getLineAxes</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/enum/Axis" target="_blank" rel="noopener noreferrer">Axis<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="purple_ieR2">}</code></div><div>
+<p>
+  Gets the axis running parallel to the line.
+  Performs getLineAxis on a list of lines.
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getIfVerticesConnected"><code style="text-decoration:none">getIfVerticesConnected</code><a class="hash-link" href="#getIfVerticesConnected" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L82"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getIfVerticesConnected</code><code>(</code><div class="inset_uKQm"><div><code>a<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>b<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code></div></div><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
+<p>Finds if two verticies share a line from a list of lines.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getConnectedVertices"><code style="text-decoration:none">getConnectedVertices</code><a class="hash-link" href="#getConnectedVertices" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L92"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getConnectedVertices</code><code>(</code><div class="inset_uKQm"><div><code>vertex<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code></div></div><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">Vertex</code><code class="purple_ieR2">}</code></div><div>
+<p>Filters out any lines that don't connect to the main vertex.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getAllVerticesFromLines"><code style="text-decoration:none">getAllVerticesFromLines</code><a class="hash-link" href="#getAllVerticesFromLines" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L105"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getAllVerticesFromLines</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">Vertex</code><code class="purple_ieR2">}</code></div><div>
+<p>Compiles a deduplicated list of every unique vertex in a list of lines.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getAllVertexConnectionsFromLines"><code style="text-decoration:none">getAllVertexConnectionsFromLines</code><a class="hash-link" href="#getAllVertexConnectionsFromLines" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L115"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getAllVertexConnectionsFromLines</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">Vertex</code><code>]</code></span><code>: </code><code class="green_DgR4">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">Vertex</code><code class="green_DgR4">}</code><code class="purple_ieR2">}</code></div><div>
+<p>Creates an indexable dictionary of the vertices each vertex is connected to.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getSharedVertex"><code style="text-decoration:none">getSharedVertex</code><a class="hash-link" href="#getSharedVertex" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L135"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getSharedVertex</code><code>(</code><div class="inset_uKQm"><div><code>line1<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>line2<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code class="blue_P4bS">Vertex?</code></div><div>
+<p>Gets if two lins share a vertex.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getIfRightAngle"><code style="text-decoration:none">getIfRightAngle</code><a class="hash-link" href="#getIfRightAngle" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L149"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getIfRightAngle</code><code>(</code><div class="inset_uKQm"><div><code>vertex<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>line1<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>line2<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
+<p>Finds if the two lines make a right angle at the vertex</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getIfRightAngleFromVertices"><code style="text-decoration:none">getIfRightAngleFromVertices</code><a class="hash-link" href="#getIfRightAngleFromVertices" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L158"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getIfRightAngleFromVertices</code><code>(</code><div class="inset_uKQm"><div><code>sharedVertex<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>a<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>b<!-- -->: </code><code class="blue_P4bS">Vertex</code></div></div><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
+<p>Finds if a set of vertices make a right angle.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getRightAngleVertices"><code style="text-decoration:none">getRightAngleVertices</code><a class="hash-link" href="#getRightAngleVertices" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L165"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getRightAngleVertices</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">string</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">Vertex</code><code class="purple_ieR2">}</code></div><div>
+<p>Gets a point at center of line.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getIntersectionBetweenTwoLines"><code style="text-decoration:none">getIntersectionBetweenTwoLines</code><a class="hash-link" href="#getIntersectionBetweenTwoLines" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L179"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getIntersectionBetweenTwoLines</code><code>(</code><div class="inset_uKQm"><div><code>line1<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>line2<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code class="blue_P4bS">Point?</code></div><div>
+<p>Gets the point of intersection between two lines, lerping between the closest points if none exist.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getVertexOppositePointsFromLines"><code style="text-decoration:none">getVertexOppositePointsFromLines</code><a class="hash-link" href="#getVertexOppositePointsFromLines" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L195"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getVertexOppositePointsFromLines</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">Vertex</code><code>]</code></span><code>: </code><code class="blue_P4bS">Point</code><code class="purple_ieR2">}</code></div><div>
+<p>When provided a quadrangular or triangular surface's lines it will return an indexable dictionary of the point on the lins opposite a vertex, rounding to the nearest vertex if an even number of vertices.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getDiagonalLinesFromEdges"><code style="text-decoration:none">getDiagonalLinesFromEdges</code><a class="hash-link" href="#getDiagonalLinesFromEdges" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L233"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getDiagonalLinesFromEdges</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code></div><div>
+<p>Creates a list of lines connecting opposite points on any quadrangle or triangle.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getTrianglePerimeter"><code style="text-decoration:none">getTrianglePerimeter</code><a class="hash-link" href="#getTrianglePerimeter" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L252"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getTrianglePerimeter</code><code>(</code><div class="inset_uKQm"><div><code>a<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>b<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>c<!-- -->: </code><code class="blue_P4bS">Vertex</code></div></div><code>) → </code><code class="blue_P4bS">number</code></div><div>
+<p>Gets the perimeter of a triangle from its vertices</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getTriangleArea"><code style="text-decoration:none">getTriangleArea</code><a class="hash-link" href="#getTriangleArea" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L260"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getTriangleArea</code><code>(</code><div class="inset_uKQm"><div><code>a<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>b<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>c<!-- -->: </code><code class="blue_P4bS">Vertex</code></div></div><code>) → </code><code class="blue_P4bS">number</code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">heron&#x27;s</code><code class="blue_P4bS">formula</code></div><div>
+<p>Gets the area of a triangle from its vertices</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getIfPointIsInTriangle"><code style="text-decoration:none">getIfPointIsInTriangle</code><a class="hash-link" href="#getIfPointIsInTriangle" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L276"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getIfPointIsInTriangle</code><code>(</code><div class="inset_uKQm"><div><code>point<!-- -->: </code><code class="blue_P4bS">Point</code><code>,</code></div><div><code>a<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>b<!-- -->: </code><code class="blue_P4bS">Vertex</code><code>,</code></div><div><code>c<!-- -->: </code><code class="blue_P4bS">Vertex</code></div></div><code>) → </code><code class="blue_P4bS">boolean</code></div><div>
+<p>gets if a point parallel to the surface of the triangle exists within the perimeter. All unparallel points will return false.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getAngleThroughLawOfCos"><code style="text-decoration:none">getAngleThroughLawOfCos</code><a class="hash-link" href="#getAngleThroughLawOfCos" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L284"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getAngleThroughLawOfCos</code><code>(</code><div class="inset_uKQm"><div><code>ab<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>bc<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>ca<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code class="blue_P4bS">Radian</code></div><div>
+<p>gets the angle of vertex B when provided three lines composing a triangle.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getAngleBetweenTwoLines"><code style="text-decoration:none">getAngleBetweenTwoLines</code><a class="hash-link" href="#getAngleBetweenTwoLines" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L301"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getAngleBetweenTwoLines</code><code>(</code><div class="inset_uKQm"><div><code>line1<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>line2<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code class="blue_P4bS">Radian</code></div><div>
+<p>Converts each line into a normal then finds the angle of both normals when they're set to the same origin.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getSideLengthThroughLawOfCos"><code style="text-decoration:none">getSideLengthThroughLawOfCos</code><a class="hash-link" href="#getSideLengthThroughLawOfCos" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L311"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getSideLengthThroughLawOfCos</code><code>(</code><div class="inset_uKQm"><div><code>b<!-- -->: </code><code class="blue_P4bS">Radian</code><code>,</code></div><div><code>ab<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>bc<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code class="blue_P4bS">number</code></div><div>
+<p>Gets the side length CA using an the angle of vertex B</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getLineInwardNormal"><code style="text-decoration:none">getLineInwardNormal</code><a class="hash-link" href="#getLineInwardNormal" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L318"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getLineInwardNormal</code><code>(</code><div class="inset_uKQm"><div><code>line<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>centerPoint<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Vector3" target="_blank" rel="noopener noreferrer">Vector3<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div></div><code>) → </code><code class="blue_P4bS">Normal</code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">does</code><code class="blue_P4bS">not</code><code class="blue_P4bS">just</code><code class="blue_P4bS">aim</code><code class="blue_P4bS">towards</code><code class="blue_P4bS">center</code><code class="blue_P4bS">point,</code><code class="blue_P4bS">only</code><code class="blue_P4bS">works</code><code class="blue_P4bS">on</code><code class="blue_P4bS">concave</code><code class="blue_P4bS">shapes</code></div><div>
+<p>Finds a normal perpindicular to the line that faces inwards and is parallel to the surface.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getClosestPointInList"><code style="text-decoration:none">getClosestPointInList</code><a class="hash-link" href="#getClosestPointInList" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L336"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getClosestPointInList</code><code>(</code><div class="inset_uKQm"><div><code>point<!-- -->: </code><code class="blue_P4bS">Point</code><code>,</code></div><div><code>list<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">Point</code><code class="purple_ieR2">}</code></div></div><code>) → </code><code class="blue_P4bS">Point</code></div><div>
+<p>Finds point in list closest to provided point.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getFarthestPointInList"><code style="text-decoration:none">getFarthestPointInList</code><a class="hash-link" href="#getFarthestPointInList" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L350"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getFarthestPointInList</code><code>(</code><div class="inset_uKQm"><div><code>point<!-- -->: </code><code class="blue_P4bS">Point</code><code>,</code></div><div><code>list<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">Point</code><code class="purple_ieR2">}</code></div></div><code>) → </code><code class="blue_P4bS">Point</code></div><div>
+<p>Finds point in list farthest to provided point</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getClosestPointOnLine"><code style="text-decoration:none">getClosestPointOnLine</code><a class="hash-link" href="#getClosestPointOnLine" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L364"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getClosestPointOnLine</code><code>(</code><div class="inset_uKQm"><div><code>point<!-- -->: </code><code class="blue_P4bS">Point</code><code>,</code></div><div><code>line<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code>(</code><code>)</code></div><div>
+<p>Finds the closest point on the line to the provided point.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getLineClosestToPoint"><code style="text-decoration:none">getLineClosestToPoint</code><a class="hash-link" href="#getLineClosestToPoint" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L376"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getLineClosestToPoint</code><code>(</code><div class="inset_uKQm"><div><code>point<!-- -->: </code><code class="blue_P4bS">Point</code><code>,</code></div><div><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code></div></div><code>) → </code><code class="blue_P4bS">Line</code></div><div>
+<p>Finds the line that comes closest to the point. Chooses arbitrarily when lines are equidistant.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getCenterFromLines"><code style="text-decoration:none">getCenterFromLines</code><a class="hash-link" href="#getCenterFromLines" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L391"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getCenterFromLines</code><code>(</code><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>) → </code><code class="blue_P4bS">Point?</code></div><div>
+<p>Gets a point at the center of a quadrangular or triangular surface when provides its lines.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getSurfaceCFrameFromLines"><code style="text-decoration:none">getSurfaceCFrameFromLines</code><a class="hash-link" href="#getSurfaceCFrameFromLines" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L417"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getSurfaceCFrameFromLines</code><code>(</code><div class="inset_uKQm"><div><code>lines<!-- -->: </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">any</code><code>]</code></span><code>: </code><code class="blue_P4bS">Line</code><code class="purple_ieR2">}</code><code>,</code></div><div><code>normal<!-- -->: </code><code class="blue_P4bS">Normal</code></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/CFrame" target="_blank" rel="noopener noreferrer">CFrame<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div><div>
+<p>Returns a cframe with the YVec parallel to the surface and the XVec perpindicular to the longest line.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getBoxBoundaries"><code style="text-decoration:none">getBoxBoundaries</code><a class="hash-link" href="#getBoxBoundaries" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L440"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getBoxBoundaries</code><code>(</code><div class="inset_uKQm"><div><code>cf<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/CFrame" target="_blank" rel="noopener noreferrer">CFrame<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>,</code></div><div><code>size<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Vector3" target="_blank" rel="noopener noreferrer">Vector3<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div></div><code>) → </code><code>(</code><div class="inset_uKQm"><div><code class="blue_P4bS">Point</code><code>,</code></div><div><code class="blue_P4bS">Point</code></div></div><code>)</code></div><div>
+<p>Finds the min and max points on a rotated box. Min / Max status are found in object space, not global space.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getPlaneIntersection"><code style="text-decoration:none">getPlaneIntersection</code><a class="hash-link" href="#getPlaneIntersection" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L448"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getPlaneIntersection</code><code>(</code><div class="inset_uKQm"><div><code>origin<!-- -->: </code><code class="blue_P4bS">Point</code><code>,</code></div><div><code>normal<!-- -->: </code><code class="blue_P4bS">Normal</code><code>,</code></div><div><code>planeOrigin<!-- -->: </code><code class="blue_P4bS">Point</code><code>,</code></div><div><code>planeAxis<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/enum/Axis" target="_blank" rel="noopener noreferrer">Axis<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div></div><code>) → </code><code>(</code><div class="inset_uKQm"><div><code class="blue_P4bS">Point</code><code>,</code></div><div><code class="blue_P4bS">number</code></div></div><code>)</code></div><div>
+<p>Finds intersection point and distance on a plane where normal hits plane from origin. If parallel it returns the origin the normal solves from.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getNonPerpindicularNormal"><code style="text-decoration:none">getNonPerpindicularNormal</code><a class="hash-link" href="#getNonPerpindicularNormal" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L466"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getNonPerpindicularNormal</code><code>(</code><code>normal<!-- -->: </code><code class="blue_P4bS">Normal</code><code>) → </code><code class="blue_P4bS">Normal</code></div><div>
+<p>Finds a normal that's not perpindicular to provided normal. I don't remember why I would ever need to do this, but I'm too afraid to remove it.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getClosestPointToLineOnLine"><code style="text-decoration:none">getClosestPointToLineOnLine</code><a class="hash-link" href="#getClosestPointToLineOnLine" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L480"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getClosestPointToLineOnLine</code><code>(</code><div class="inset_uKQm"><div><code>a<!-- -->: </code><code class="blue_P4bS">Line</code><code>,</code></div><div><code>b<!-- -->: </code><code class="blue_P4bS">Line</code></div></div><code>) → </code><code class="blue_P4bS">Point?</code></div><div>
+<p>
+  When provided vertex A, vertex B, and line AC it solves for angle C
+  Finds closest point on line a to the closest point on line b
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="getVolume"><code style="text-decoration:none">getVolume</code><a class="hash-link" href="#getVolume" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Geometry.lua#L504"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Geometry<!-- -->.</code><code class="green_DgR4">getVolume</code><code>(</code><code>size<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Vector3" target="_blank" rel="noopener noreferrer">Vector3<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_P4bS">number</code></div><div>
+<p>Gets the volume of a box with the provided dimensions.</p>
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;getLineLengths&quot;,
+            &quot;desc&quot;: &quot;Gets length of line.\nPerforms getLineLength on a list of lines.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: number }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 45,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getLineCenters&quot;,
+            &quot;desc&quot;: &quot;Gets a point at center of line.\nPerforms getLineCenter on a list of lines.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Point }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 59,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getLineAxes&quot;,
+            &quot;desc&quot;: &quot;Gets the axis running parallel to the line.\nPerforms getLineAxis on a list of lines.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [string]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [string]: Axis }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 73,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getIfVerticesConnected&quot;,
+            &quot;desc&quot;: &quot;Finds if two verticies share a line from a list of lines.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 82,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getConnectedVertices&quot;,
+            &quot;desc&quot;: &quot;Filters out any lines that don&#x27;t connect to the main vertex.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;vertex&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Vertex }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 92,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getAllVerticesFromLines&quot;,
+            &quot;desc&quot;: &quot;Compiles a deduplicated list of every unique vertex in a list of lines.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [string]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Vertex }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 105,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getAllVertexConnectionsFromLines&quot;,
+            &quot;desc&quot;: &quot;Creates an indexable dictionary of the vertices each vertex is connected to.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [string]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [Vertex]: { [number]: Vertex } }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 115,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getSharedVertex&quot;,
+            &quot;desc&quot;: &quot;Gets if two lins share a vertex.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;line1&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;line2&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex?\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 135,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getIfRightAngle&quot;,
+            &quot;desc&quot;: &quot;Finds if the two lines make a right angle at the vertex&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;vertex&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;line1&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;line2&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 149,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getIfRightAngleFromVertices&quot;,
+            &quot;desc&quot;: &quot;Finds if a set of vertices make a right angle.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;sharedVertex&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 158,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getRightAngleVertices&quot;,
+            &quot;desc&quot;: &quot;Gets a point at center of line.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [string]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Vertex }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 165,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getIntersectionBetweenTwoLines&quot;,
+            &quot;desc&quot;: &quot;Gets the point of intersection between two lines, lerping between the closest points if none exist.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;line1&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;line2&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point?\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 179,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getVertexOppositePointsFromLines&quot;,
+            &quot;desc&quot;: &quot;When provided a quadrangular or triangular surface&#x27;s lines it will return an indexable dictionary of the point on the lins opposite a vertex, rounding to the nearest vertex if an even number of vertices.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [Vertex]: Point }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 195,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getDiagonalLinesFromEdges&quot;,
+            &quot;desc&quot;: &quot;Creates a list of lines connecting opposite points on any quadrangle or triangle. &quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Line }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 233,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getTrianglePerimeter&quot;,
+            &quot;desc&quot;: &quot;Gets the perimeter of a triangle from its vertices&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;c&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 252,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getTriangleArea&quot;,
+            &quot;desc&quot;: &quot;Gets the area of a triangle from its vertices&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;c&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number --heron&#x27;s formula\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 260,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getIfPointIsInTriangle&quot;,
+            &quot;desc&quot;: &quot;gets if a point parallel to the surface of the triangle exists within the perimeter. All unparallel points will return false.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;point&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;c&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vertex&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 276,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getAngleThroughLawOfCos&quot;,
+            &quot;desc&quot;: &quot;gets the angle of vertex B when provided three lines composing a triangle.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;ab&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;bc&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;ca&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Radian\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 284,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getAngleBetweenTwoLines&quot;,
+            &quot;desc&quot;: &quot;Converts each line into a normal then finds the angle of both normals when they&#x27;re set to the same origin.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;line1&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;line2&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Radian\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 301,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getSideLengthThroughLawOfCos&quot;,
+            &quot;desc&quot;: &quot;Gets the side length CA using an the angle of vertex B&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Radian&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;ab&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;bc&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 311,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getLineInwardNormal&quot;,
+            &quot;desc&quot;: &quot;Finds a normal perpindicular to the line that faces inwards and is parallel to the surface.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;line&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;centerPoint&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector3\n&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Normal --does not just aim towards center point, only works on concave shapes\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 318,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getClosestPointInList&quot;,
+            &quot;desc&quot;: &quot;Finds point in list closest to provided point.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;point&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;list&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Point }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 336,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getFarthestPointInList&quot;,
+            &quot;desc&quot;: &quot;Finds point in list farthest to provided point&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;point&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;list&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Point }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 350,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getClosestPointOnLine&quot;,
+            &quot;desc&quot;: &quot;Finds the closest point on the line to the provided point.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;point&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;line&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 364,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getLineClosestToPoint&quot;,
+            &quot;desc&quot;: &quot;Finds the line that comes closest to the point. Chooses arbitrarily when lines are equidistant.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;point&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 376,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getCenterFromLines&quot;,
+            &quot;desc&quot;: &quot;Gets a point at the center of a quadrangular or triangular surface when provides its lines. &quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point?\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 391,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getSurfaceCFrameFromLines&quot;,
+            &quot;desc&quot;: &quot;Returns a cframe with the YVec parallel to the surface and the XVec perpindicular to the longest line.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;lines&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [any]: Line }&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;normal&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Normal&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;CFrame\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 417,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getBoxBoundaries&quot;,
+            &quot;desc&quot;: &quot;Finds the min and max points on a rotated box. Min / Max status are found in object space, not global space.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;cf&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;CFrame&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;size&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector3&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 440,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getPlaneIntersection&quot;,
+            &quot;desc&quot;: &quot;Finds intersection point and distance on a plane where normal hits plane from origin. If parallel it returns the origin the normal solves from.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;origin&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;normal&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Normal&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;planeOrigin&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;planeAxis&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Axis\n&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point&quot;
+                },
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 448,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getNonPerpindicularNormal&quot;,
+            &quot;desc&quot;: &quot;Finds a normal that&#x27;s not perpindicular to provided normal. I don&#x27;t remember why I would ever need to do this, but I&#x27;m too afraid to remove it.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;normal&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Normal&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Normal\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 466,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getClosestPointToLineOnLine&quot;,
+            &quot;desc&quot;: &quot;When provided vertex A, vertex B, and line AC it solves for angle C\nFinds closest point on line a to the closest point on line b &quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;a&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;b&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Line&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Point?\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 480,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getVolume&quot;,
+            &quot;desc&quot;: &quot;Gets the volume of a box with the provided dimensions.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;size&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector3&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 504,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [
+        {
+            &quot;name&quot;: &quot;phi&quot;,
+            &quot;desc&quot;: &quot;It&#x27;s a constant, no need to keep resolving for it.&quot;,
+            &quot;lua_type&quot;: &quot;number&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 37,
+                &quot;path&quot;: &quot;src/Geometry.lua&quot;
+            }
+        }
+    ],
+    &quot;types&quot;: [],
+    &quot;name&quot;: &quot;Geometry&quot;,
+    &quot;desc&quot;: &quot;A long list of geometry related functions. Consider rounding your vectors to the nearest hundredth as the smallest difference can fail an equality test.&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 27,
+        &quot;path&quot;: &quot;src/Geometry.lua&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#phi" class="table-of-contents__link toc-highlight">phi</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#getAllVertexConnectionsFromLines" class="table-of-contents__link toc-highlight">.getAllVertexConnectionsFromLines</a></li><li><a href="#getAllVerticesFromLines" class="table-of-contents__link toc-highlight">.getAllVerticesFromLines</a></li><li><a href="#getAngleBetweenTwoLines" class="table-of-contents__link toc-highlight">.getAngleBetweenTwoLines</a></li><li><a href="#getAngleThroughLawOfCos" class="table-of-contents__link toc-highlight">.getAngleThroughLawOfCos</a></li><li><a href="#getBoxBoundaries" class="table-of-contents__link toc-highlight">.getBoxBoundaries</a></li><li><a href="#getCenterFromLines" class="table-of-contents__link toc-highlight">.getCenterFromLines</a></li><li><a href="#getClosestPointInList" class="table-of-contents__link toc-highlight">.getClosestPointInList</a></li><li><a href="#getClosestPointOnLine" class="table-of-contents__link toc-highlight">.getClosestPointOnLine</a></li><li><a href="#getClosestPointToLineOnLine" class="table-of-contents__link toc-highlight">.getClosestPointToLineOnLine</a></li><li><a href="#getConnectedVertices" class="table-of-contents__link toc-highlight">.getConnectedVertices</a></li><li><a href="#getDiagonalLinesFromEdges" class="table-of-contents__link toc-highlight">.getDiagonalLinesFromEdges</a></li><li><a href="#getFarthestPointInList" class="table-of-contents__link toc-highlight">.getFarthestPointInList</a></li><li><a href="#getIfPointIsInTriangle" class="table-of-contents__link toc-highlight">.getIfPointIsInTriangle</a></li><li><a href="#getIfRightAngle" class="table-of-contents__link toc-highlight">.getIfRightAngle</a></li><li><a href="#getIfRightAngleFromVertices" class="table-of-contents__link toc-highlight">.getIfRightAngleFromVertices</a></li><li><a href="#getIfVerticesConnected" class="table-of-contents__link toc-highlight">.getIfVerticesConnected</a></li><li><a href="#getIntersectionBetweenTwoLines" class="table-of-contents__link toc-highlight">.getIntersectionBetweenTwoLines</a></li><li><a href="#getLineAxes" class="table-of-contents__link toc-highlight">.getLineAxes</a></li><li><a href="#getLineCenters" class="table-of-contents__link toc-highlight">.getLineCenters</a></li><li><a href="#getLineClosestToPoint" class="table-of-contents__link toc-highlight">.getLineClosestToPoint</a></li><li><a href="#getLineInwardNormal" class="table-of-contents__link toc-highlight">.getLineInwardNormal</a></li><li><a href="#getLineLengths" class="table-of-contents__link toc-highlight">.getLineLengths</a></li><li><a href="#getNonPerpindicularNormal" class="table-of-contents__link toc-highlight">.getNonPerpindicularNormal</a></li><li><a href="#getPlaneIntersection" class="table-of-contents__link toc-highlight">.getPlaneIntersection</a></li><li><a href="#getRightAngleVertices" class="table-of-contents__link toc-highlight">.getRightAngleVertices</a></li><li><a href="#getSharedVertex" class="table-of-contents__link toc-highlight">.getSharedVertex</a></li><li><a href="#getSideLengthThroughLawOfCos" class="table-of-contents__link toc-highlight">.getSideLengthThroughLawOfCos</a></li><li><a href="#getSurfaceCFrameFromLines" class="table-of-contents__link toc-highlight">.getSurfaceCFrameFromLines</a></li><li><a href="#getTriangleArea" class="table-of-contents__link toc-highlight">.getTriangleArea</a></li><li><a href="#getTrianglePerimeter" class="table-of-contents__link toc-highlight">.getTrianglePerimeter</a></li><li><a href="#getVertexOppositePointsFromLines" class="table-of-contents__link toc-highlight">.getVertexOppositePointsFromLines</a></li><li><a href="#getVolume" class="table-of-contents__link toc-highlight">.getVolume</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 Nightcycle Studios LLC. Built with Moonwave and Docusaurus</div></div></div></footer></div>
+<script src="/luau-math/assets/js/runtime~main.31e8107f.js"></script>
+<script src="/luau-math/assets/js/main.e5435c94.js"></script>
+</body>
+</html>

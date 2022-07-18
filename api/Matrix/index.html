@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="plugin-moonwave plugin-id-moonwave">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="generator" content="Docusaurus v2.0.0-beta.21">
+<title data-rh="true">Matrix | Math</title><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://nightcycle.github.io/luau-math/api/Matrix"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="Matrix | Math"><meta data-rh="true" name="description" content="A N-Dimensional matrix class meant to work with the N-Dimensional Vector class"><meta data-rh="true" property="og:description" content="A N-Dimensional matrix class meant to work with the N-Dimensional Vector class"><link data-rh="true" rel="icon" href="/luau-math/favicon.ico"><link data-rh="true" rel="canonical" href="https://nightcycle.github.io/luau-math/api/Matrix"><link data-rh="true" rel="alternate" href="https://nightcycle.github.io/luau-math/api/Matrix" hreflang="en"><link data-rh="true" rel="alternate" href="https://nightcycle.github.io/luau-math/api/Matrix" hreflang="x-default"><link rel="stylesheet" href="/luau-math/assets/css/styles.a379a752.css">
+<link rel="preload" href="/luau-math/assets/js/runtime~main.31e8107f.js" as="script">
+<link rel="preload" href="/luau-math/assets/js/main.e5435c94.js" as="script">
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
+<div role="region"><a href="#" class="skipToContent_fXgn">Skip to main content</a></div><nav class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Navigation bar toggle" class="navbar__toggle clean-btn" type="button" tabindex="0"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/luau-math/"><b class="navbar__title text--truncate">Math</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/luau-math/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/nightcycle/luau-math" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_lCJq"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="searchBox_ZlJk"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input type="search" id="search_input_react" placeholder="Press S to Search..." aria-label="Search" class="navbar__search-input search-bar"></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div class="main-wrapper docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Algebra">​Algebra</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Geometry">​Geometry</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Math">​Math</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/luau-math/api/Matrix">​Matrix</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Mesh">​Mesh</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Noise">​Noise</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/NoiseSolver">​Noise​Solver</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Vector">​Vector</a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">Matrix</span></h1><div class="luaClassTags_EipM"></div><div>
+<p>A N-Dimensional matrix class meant to work with the N-Dimensional Vector class</p>
+</div></header><h2 class="anchor anchorWithStickyNavbar_LWe7" id="properties">Properties<a class="hash-link" href="#properties" title="Direct link to heading">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Dimensions"><code style="text-decoration:none">Dimensions</code><a class="hash-link" href="#Dimensions" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L13"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->.<!-- -->Dimensions<!-- -->:<!-- --> </code> <code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>A 2 dimensional vector describing the length of the vectors in Y and the number of vectors in X.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Type"><code style="text-decoration:none">Type</code><a class="hash-link" href="#Type" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L17"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->.<!-- -->Type<!-- -->:<!-- --> </code> <code class="blue_P4bS">string</code></div><div>
+<p>An identifier for the class</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Magnitude"><code style="text-decoration:none">Magnitude</code><a class="hash-link" href="#Magnitude" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L21"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->.<!-- -->Magnitude<!-- -->:<!-- --> </code> <code class="blue_P4bS">number</code></div><div>
+<p>The sum of all the vector magnitudes.</p>
+</div><h2 class="anchor anchorWithStickyNavbar_LWe7" id="functions">Functions<a class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="new"><code style="text-decoration:none">new</code><a class="hash-link" href="#new" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L23"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->.</code><code class="green_DgR4">new</code><code>(</code><code>...<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code>(</code><code>)</code></div><div>
+<p>constructs a new matrix from vector parameters</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="one"><code style="text-decoration:none">one</code><a class="hash-link" href="#one" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L284"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->.</code><code class="green_DgR4">one</code><code>(</code><code>dimensions<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Creates a matrix with all vector values set to 1</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="identity"><code style="text-decoration:none">identity</code><a class="hash-link" href="#identity" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L293"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->.</code><code class="green_DgR4">identity</code><code>(</code><code>dimensions<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Creates a matrix with any cell along the diagonal of the matrix set to 1.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__index"><code style="text-decoration:none">__index</code><a class="hash-link" href="#__index" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L47"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__index</code><code>(</code><code>k<!-- -->: </code><code class="blue_P4bS">any</code><code>) → </code><code class="blue_P4bS">any?</code></div><div>
+<p>Allows for the access of public variables, as well as the indexing of specific vectors within the matrix.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="ToVectors"><code style="text-decoration:none">ToVectors</code><a class="hash-link" href="#ToVectors" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L60"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">ToVectors</code><code>(</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="purple_ieR2">}</code></div><div>
+<p>
+  Similar to vectors you aren't allowed ot change properties after construction, create a new matrix instead.
+  returns a list of vectors used to construct the matrix
+</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__add"><code style="text-decoration:none">__add</code><a class="hash-link" href="#__add" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L69"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__add</code><code>(</code><code>vMatVec<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc"> | </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">add</code></div><div>
+<p>Performs an addition operation on the matrix and another matrix or vector.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__sub"><code style="text-decoration:none">__sub</code><a class="hash-link" href="#__sub" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L94"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__sub</code><code>(</code><code>vMatVec<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc"> | </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">add</code></div><div>
+<p>Performs a subtraction operation on the matrix and another matrix or vector.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__mul"><code style="text-decoration:none">__mul</code><a class="hash-link" href="#__mul" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L116"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__mul</code><code>(</code><code>vMatVecNum<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc"> | </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="op_lSLc"> | </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">multiply</code></div><div>
+<p>Performs a multiplication operation on the matrix and another matrix, vector, or number.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__div"><code style="text-decoration:none">__div</code><a class="hash-link" href="#__div" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L170"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__div</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc"> | </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">divide</code></div><div>
+<p>Performs a division operation on the matrix and another matrix or number.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__pow"><code style="text-decoration:none">__pow</code><a class="hash-link" href="#__pow" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L185"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__pow</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc"> | </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">power</code></div><div>
+<p>Performs an exponential operation on the matrix and another matrix or number.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__mod"><code style="text-decoration:none">__mod</code><a class="hash-link" href="#__mod" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L204"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__mod</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc"> | </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">mod</code></div><div>
+<p>Performs an modulus operation on the matrix and another matrix or number.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__eq"><code style="text-decoration:none">__eq</code><a class="hash-link" href="#__eq" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L223"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__eq</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS">any</code><code>) → </code><code class="blue_P4bS">boolean</code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">equal</code></div><div>
+<p>Determines if another value is a matrix with the same vectors configuration</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="ToRows"><code style="text-decoration:none">ToRows</code><a class="hash-link" href="#ToRows" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L240"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">ToRows</code><code>(</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="purple_ieR2">}</code></div><div>
+<p>Vectors are written as columns within traditional matrix layout. This returns vectors constructed from the rows.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Transpose"><code style="text-decoration:none">Transpose</code><a class="hash-link" href="#Transpose" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L257"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">Transpose</code><code>(</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Matrix">Matrix</a></code></div><div>
+<p>Rotates the matrix counter clockwise 90 degrees.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__tostring"><code style="text-decoration:none">__tostring</code><a class="hash-link" href="#__tostring" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Matrix/init.lua#L263"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Matrix<!-- -->:</code><code class="green_DgR4">__tostring</code><code>(</code><code>) → </code><code class="blue_P4bS">string</code></div><div>
+<p>Converts matrix to string.</p>
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;new&quot;,
+            &quot;desc&quot;: &quot;constructs a new matrix from vector parameters&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 23,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__index&quot;,
+            &quot;desc&quot;: &quot;Allows for the access of public variables, as well as the indexing of specific vectors within the matrix.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;k&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;any?\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 47,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;ToVectors&quot;,
+            &quot;desc&quot;: &quot;Similar to vectors you aren&#x27;t allowed ot change properties after construction, create a new matrix instead.\nreturns a list of vectors used to construct the matrix&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Vector }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 60,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__add&quot;,
+            &quot;desc&quot;: &quot;Performs an addition operation on the matrix and another matrix or vector.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;vMatVec&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix | Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix --add\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 69,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__sub&quot;,
+            &quot;desc&quot;: &quot;Performs a subtraction operation on the matrix and another matrix or vector.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;vMatVec&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix | Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix --add\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 94,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__mul&quot;,
+            &quot;desc&quot;: &quot;Performs a multiplication operation on the matrix and another matrix, vector, or number.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;vMatVecNum&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix | Vector | number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix --multiply\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 116,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__div&quot;,
+            &quot;desc&quot;: &quot;Performs a division operation on the matrix and another matrix or number.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix | number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix --divide\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 170,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__pow&quot;,
+            &quot;desc&quot;: &quot;Performs an exponential operation on the matrix and another matrix or number.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix | number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix --power\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 185,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__mod&quot;,
+            &quot;desc&quot;: &quot;Performs an modulus operation on the matrix and another matrix or number.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix | number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix --mod\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 204,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__eq&quot;,
+            &quot;desc&quot;: &quot;Determines if another value is a matrix with the same vectors configuration&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean --equal\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 223,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;ToRows&quot;,
+            &quot;desc&quot;: &quot;Vectors are written as columns within traditional matrix layout. This returns vectors constructed from the rows.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: Vector }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 240,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Transpose&quot;,
+            &quot;desc&quot;: &quot;Rotates the matrix counter clockwise 90 degrees.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Matrix\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 257,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__tostring&quot;,
+            &quot;desc&quot;: &quot;Converts matrix to string.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;string\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 263,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;one&quot;,
+            &quot;desc&quot;: &quot;Creates a matrix with all vector values set to 1&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;dimensions&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 284,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;identity&quot;,
+            &quot;desc&quot;: &quot;Creates a matrix with any cell along the diagonal of the matrix set to 1.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;dimensions&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 293,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [
+        {
+            &quot;name&quot;: &quot;Dimensions&quot;,
+            &quot;desc&quot;: &quot;A 2 dimensional vector describing the length of the vectors in Y and the number of vectors in X. &quot;,
+            &quot;lua_type&quot;: &quot;Vector&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 13,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Type&quot;,
+            &quot;desc&quot;: &quot;An identifier for the class&quot;,
+            &quot;lua_type&quot;: &quot;string&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 17,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Magnitude&quot;,
+            &quot;desc&quot;: &quot;The sum of all the vector magnitudes.&quot;,
+            &quot;lua_type&quot;: &quot;number&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 21,
+                &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+            }
+        }
+    ],
+    &quot;types&quot;: [],
+    &quot;name&quot;: &quot;Matrix&quot;,
+    &quot;desc&quot;: &quot;A N-Dimensional matrix class meant to work with the N-Dimensional Vector class&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 4,
+        &quot;path&quot;: &quot;src/Algebra/Matrix/init.lua&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#Dimensions" class="table-of-contents__link toc-highlight">Dimensions</a></li><li><a href="#Magnitude" class="table-of-contents__link toc-highlight">Magnitude</a></li><li><a href="#Type" class="table-of-contents__link toc-highlight">Type</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#__add" class="table-of-contents__link toc-highlight">:__add</a></li><li><a href="#__div" class="table-of-contents__link toc-highlight">:__div</a></li><li><a href="#__eq" class="table-of-contents__link toc-highlight">:__eq</a></li><li><a href="#__index" class="table-of-contents__link toc-highlight">:__index</a></li><li><a href="#__mod" class="table-of-contents__link toc-highlight">:__mod</a></li><li><a href="#__mul" class="table-of-contents__link toc-highlight">:__mul</a></li><li><a href="#__pow" class="table-of-contents__link toc-highlight">:__pow</a></li><li><a href="#__sub" class="table-of-contents__link toc-highlight">:__sub</a></li><li><a href="#__tostring" class="table-of-contents__link toc-highlight">:__tostring</a></li><li><a href="#ToRows" class="table-of-contents__link toc-highlight">:ToRows</a></li><li><a href="#ToVectors" class="table-of-contents__link toc-highlight">:ToVectors</a></li><li><a href="#Transpose" class="table-of-contents__link toc-highlight">:Transpose</a></li><li><a href="#identity" class="table-of-contents__link toc-highlight">.identity</a></li><li><a href="#new" class="table-of-contents__link toc-highlight">.new</a></li><li><a href="#one" class="table-of-contents__link toc-highlight">.one</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 Nightcycle Studios LLC. Built with Moonwave and Docusaurus</div></div></div></footer></div>
+<script src="/luau-math/assets/js/runtime~main.31e8107f.js"></script>
+<script src="/luau-math/assets/js/main.e5435c94.js"></script>
+</body>
+</html>

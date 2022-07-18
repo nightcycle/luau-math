@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="plugin-moonwave plugin-id-moonwave">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="generator" content="Docusaurus v2.0.0-beta.21">
+<title data-rh="true">Vector | Math</title><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://nightcycle.github.io/luau-math/api/Vector"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docusaurus_tag" content="default"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docsearch:docusaurus_tag" content="default"><meta data-rh="true" property="og:title" content="Vector | Math"><meta data-rh="true" name="description" content="A N-Dimensional vector class with similar API formatting to Roblox&#x27;s native Vector2 and Vector3 datatypes.
+When not indexing the properties or functions, you can also index specific dimensional values by their dimension number. For example indexing the Y value of a 3 dimensional vector would be vector[2]."><meta data-rh="true" property="og:description" content="A N-Dimensional vector class with similar API formatting to Roblox&#x27;s native Vector2 and Vector3 datatypes.
+When not indexing the properties or functions, you can also index specific dimensional values by their dimension number. For example indexing the Y value of a 3 dimensional vector would be vector[2]."><link data-rh="true" rel="icon" href="/luau-math/favicon.ico"><link data-rh="true" rel="canonical" href="https://nightcycle.github.io/luau-math/api/Vector"><link data-rh="true" rel="alternate" href="https://nightcycle.github.io/luau-math/api/Vector" hreflang="en"><link data-rh="true" rel="alternate" href="https://nightcycle.github.io/luau-math/api/Vector" hreflang="x-default"><link rel="stylesheet" href="/luau-math/assets/css/styles.a379a752.css">
+<link rel="preload" href="/luau-math/assets/js/runtime~main.31e8107f.js" as="script">
+<link rel="preload" href="/luau-math/assets/js/main.e5435c94.js" as="script">
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
+<div role="region"><a href="#" class="skipToContent_fXgn">Skip to main content</a></div><nav class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Navigation bar toggle" class="navbar__toggle clean-btn" type="button" tabindex="0"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/luau-math/"><b class="navbar__title text--truncate">Math</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/luau-math/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/nightcycle/luau-math" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_lCJq"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="Switch between dark and light mode (currently light mode)" aria-label="Switch between dark and light mode (currently light mode)"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="searchBox_ZlJk"><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input type="search" id="search_input_react" placeholder="Press S to Search..." aria-label="Search" class="navbar__search-input search-bar"></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div class="main-wrapper docPageContainer_wNNk"><div class="docPage_Dpn1"><div class="docSidebarContainer_o_re"><div class="sidebar_njMd"><nav class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Algebra">​Algebra</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Geometry">​Geometry</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Math">​Math</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Matrix">​Matrix</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Mesh">​Mesh</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/Noise">​Noise</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/luau-math/api/NoiseSolver">​Noise​Solver</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/luau-math/api/Vector">​Vector</a></li></ul></nav></div></div><main class="docMainContainer_HJE1"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_MU3C"><div class="docItemContainer_Wv98"><article><div class="member_J0w1 markdown"><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_oUs_"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><header><h1 class="docTitle_mZRt" style="text-decoration:none"><span style="display:inline-block">Vector</span></h1><div class="luaClassTags_EipM"></div><div>
+<p>
+  A N-Dimensional vector class with similar API formatting to Roblox's native Vector2 and Vector3 datatypes.
+  When not indexing the properties or functions, you can also index specific dimensional values by their dimension number. For example indexing the Y value of a 3 dimensional vector would be vector[2].
+</p>
+</div></header><h2 class="anchor anchorWithStickyNavbar_LWe7" id="properties">Properties<a class="hash-link" href="#properties" title="Direct link to heading">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Size"><code style="text-decoration:none">Size</code><a class="hash-link" href="#Size" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L383"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.<!-- -->Size<!-- -->:<!-- --> </code> <code class="blue_P4bS">number</code></div><div>
+<p>The dimension of the vector, for example a Vector3 would have a size of 3.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Type"><code style="text-decoration:none">Type</code><a class="hash-link" href="#Type" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L387"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.<!-- -->Type<!-- -->:<!-- --> </code> <code class="blue_P4bS">string</code></div><div>
+<p>An identifier for the class</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Magnitude"><code style="text-decoration:none">Magnitude</code><a class="hash-link" href="#Magnitude" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L391"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.<!-- -->Magnitude<!-- -->:<!-- --> </code> <code class="blue_P4bS">number</code></div><div>
+<p>The length of a line across all dimensions, similar to how the magnitude of a Vector2 is the length of the hypotenuse of a right triangle given the side lengths of X and Y.</p>
+</div><h2 class="anchor anchorWithStickyNavbar_LWe7" id="functions">Functions<a class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="zero"><code style="text-decoration:none">zero</code><a class="hash-link" href="#zero" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L336"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.</code><code class="green_DgR4">zero</code><code>(</code><code>size<!-- -->: </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Constructs vector with specified size and a magnitude of 0</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="fromVector3"><code style="text-decoration:none">fromVector3</code><a class="hash-link" href="#fromVector3" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L346"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.</code><code class="green_DgR4">fromVector3</code><code>(</code><code>v3<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Vector3" target="_blank" rel="noopener noreferrer">Vector3<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Constructs vector from Vector3</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="fromVector2"><code style="text-decoration:none">fromVector2</code><a class="hash-link" href="#fromVector2" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L352"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.</code><code class="green_DgR4">fromVector2</code><code>(</code><code>v2<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Vector2" target="_blank" rel="noopener noreferrer">Vector2<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Constructs vector from Vector2</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="one"><code style="text-decoration:none">one</code><a class="hash-link" href="#one" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L358"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.</code><code class="green_DgR4">one</code><code>(</code><code>size<!-- -->: </code><code class="blue_P4bS">number</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Provides a vector of specified size with a 1 in each dimension</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="identity"><code style="text-decoration:none">identity</code><a class="hash-link" href="#identity" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L368"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.</code><code class="green_DgR4">identity</code><code>(</code><div class="inset_uKQm"><div><code>size<!-- -->: </code><code class="blue_P4bS">number</code><code>,</code></div><div><code>index<!-- -->: </code><code class="blue_P4bS">number</code></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Returns a vector of specified size with a 1 at the specified index.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="new"><code style="text-decoration:none">new</code><a class="hash-link" href="#new" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L393"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->.</code><code class="green_DgR4">new</code><code>(</code><code>...<!-- -->: </code><code class="blue_P4bS">number</code><code>) → </code><code>(</code><code>)</code></div><div>
+<p>constructs a new vector from number parameters</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__newindex"><code style="text-decoration:none">__newindex</code><a class="hash-link" href="#__newindex" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L28"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__newindex</code><code>(</code><div class="inset_uKQm"><div><code>k<!-- -->: </code><code class="blue_P4bS">any</code><code>,</code></div><div><code>v<!-- -->: </code><code class="blue_P4bS">number</code></div></div><code>) → </code><code class="blue_P4bS">nil</code></div><div>
+<p>Disallows the user to edit values after construction, similar to Roblox Vector2s and Vector3s. Just construct a new one if you need to change something.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__add"><code style="text-decoration:none">__add</code><a class="hash-link" href="#__add" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L34"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__add</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">add</code></div><div>
+<p>Performs an addition operation on vector</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__sub"><code style="text-decoration:none">__sub</code><a class="hash-link" href="#__sub" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L48"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__sub</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">subtract</code></div><div>
+<p>Performs a subtraction operation on vector</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__mul"><code style="text-decoration:none">__mul</code><a class="hash-link" href="#__mul" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L61"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__mul</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">multiply</code></div><div>
+<p>Performs a multiplication operation on vector</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__div"><code style="text-decoration:none">__div</code><a class="hash-link" href="#__div" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L81"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__div</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">divide</code></div><div>
+<p>Performs a division operation on vector</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__pow"><code style="text-decoration:none">__pow</code><a class="hash-link" href="#__pow" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L101"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__pow</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">power</code></div><div>
+<p>Performs an exponent operation on vector</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__mod"><code style="text-decoration:none">__mod</code><a class="hash-link" href="#__mod" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L121"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__mod</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">mod</code></div><div>
+<p>Performs a modulus operation on vector</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__eq"><code style="text-decoration:none">__eq</code><a class="hash-link" href="#__eq" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L141"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__eq</code><code>(</code><code>v<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS">boolean</code><code class="op_lSLc">-</code><code class="op_lSLc">-</code><code class="blue_P4bS">equal</code></div><div>
+<p>Determins if two vectors are equal</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="__tostring"><code style="text-decoration:none">__tostring</code><a class="hash-link" href="#__tostring" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L159"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">__tostring</code><code>(</code><code>) → </code><code class="blue_P4bS">string</code></div><div>
+<p>Converts vector to a readable string. Technically this should be written vertically but that can be difficult to read in the output and as instance names.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="ToScalars"><code style="text-decoration:none">ToScalars</code><a class="hash-link" href="#ToScalars" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L177"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">ToScalars</code><code>(</code><code>) → </code><code class="purple_ieR2">{</code><span><code>[</code><code class="blue_P4bS">number</code><code>]</code></span><code>: </code><code class="blue_P4bS">number</code><code class="purple_ieR2">}</code></div><div>
+<p>Returns the values at each dimension in a list</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Round"><code style="text-decoration:none">Round</code><a class="hash-link" href="#Round" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L188"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">Round</code><code>(</code><code>pow<!-- -->: </code><code class="blue_P4bS">number?</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Returns a vector rounded to closest integer at each dimension.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Floor"><code style="text-decoration:none">Floor</code><a class="hash-link" href="#Floor" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L202"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">Floor</code><code>(</code><code>pow<!-- -->: </code><code class="blue_P4bS">number?</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Returns a vector rounded to lower integer at each dimension.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Ceil"><code style="text-decoration:none">Ceil</code><a class="hash-link" href="#Ceil" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L215"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">Ceil</code><code>(</code><code>pow<!-- -->: </code><code class="blue_P4bS">number?</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Returns a Vector rounded to higher integer at each dimension.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Cross"><code style="text-decoration:none">Cross</code><a class="hash-link" href="#Cross" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L228"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">Cross</code><code>(</code><code>other<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Returns the cross product.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="DotProduct"><code style="text-decoration:none">DotProduct</code><a class="hash-link" href="#DotProduct" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L287"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">DotProduct</code><code>(</code><code>other<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Returns the dot product.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Dot"><code style="text-decoration:none">Dot</code><a class="hash-link" href="#Dot" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L301"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">Dot</code><code>(</code><code>other<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>) → </code><code class="blue_P4bS">number</code></div><div>
+<p>Returns the dot product as single number.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="Lerp"><code style="text-decoration:none">Lerp</code><a class="hash-link" href="#Lerp" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L312"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">Lerp</code><code>(</code><div class="inset_uKQm"><div><code>goal<!-- -->: </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code><code>,</code></div><div><code>alpha<!-- -->: </code><code class="blue_P4bS">number</code></div></div><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="/luau-math/api/Vector">Vector</a></code></div><div>
+<p>Constructs a vector interpolated between second vector by alpha.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="ToVector3"><code style="text-decoration:none">ToVector3</code><a class="hash-link" href="#ToVector3" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L322"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">ToVector3</code><code>(</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Vector3" target="_blank" rel="noopener noreferrer">Vector3<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div><div>
+<p>Takes the first two dimensions of vector and constructs a Roblox Vector3. Will use 0 for relevant dimensions if vector has a size below 3.</p>
+</div><div class="divider_rE5g"></div><h3 class="anchor anchorWithStickyNavbar_LWe7" id="ToVector2"><code style="text-decoration:none">ToVector2</code><a class="hash-link" href="#ToVector2" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_BPdw"><a class="sourceButton_sEho" href="https://github.com/nightcycle/luau-math/blob/master/src/Algebra/Vector/init.lua#L329"><div class="sourceButtonText_Vh0m">&lt;/&gt;</div></a></div><div class="memberString_GwaU"><code>Vector<!-- -->:</code><code class="green_DgR4">ToVector2</code><code>(</code><code>) → </code><code class="blue_P4bS"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Vector2" target="_blank" rel="noopener noreferrer">Vector2<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div><div>
+<p>Takes the first two dimensions of vector and constructs a Roblox Vector2. Will use 0 for relevant dimensions if Vector has a size below 2.</p>
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;__newindex&quot;,
+            &quot;desc&quot;: &quot;Disallows the user to edit values after construction, similar to Roblox Vector2s and Vector3s. Just construct a new one if you need to change something.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;k&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;any&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;nil\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 28,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__add&quot;,
+            &quot;desc&quot;: &quot;Performs an addition operation on vector&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector --add\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 34,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__sub&quot;,
+            &quot;desc&quot;: &quot;Performs a subtraction operation on vector&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector --subtract\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 48,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__mul&quot;,
+            &quot;desc&quot;: &quot;Performs a multiplication operation on vector&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector --multiply\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 61,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__div&quot;,
+            &quot;desc&quot;: &quot;Performs a division operation on vector&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector --divide\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 81,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__pow&quot;,
+            &quot;desc&quot;: &quot;Performs an exponent operation on vector&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector --power\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 101,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__mod&quot;,
+            &quot;desc&quot;: &quot;Performs a modulus operation on vector&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector --mod\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 121,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__eq&quot;,
+            &quot;desc&quot;: &quot;Determins if two vectors are equal&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;boolean --equal\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 141,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;__tostring&quot;,
+            &quot;desc&quot;: &quot;Converts vector to a readable string. Technically this should be written vertically but that can be difficult to read in the output and as instance names.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;string\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 159,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;ToScalars&quot;,
+            &quot;desc&quot;: &quot;Returns the values at each dimension in a list&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;{ [number]: number }\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 177,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Round&quot;,
+            &quot;desc&quot;: &quot;Returns a vector rounded to closest integer at each dimension.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;pow&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 188,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Floor&quot;,
+            &quot;desc&quot;: &quot;Returns a vector rounded to lower integer at each dimension.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;pow&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 202,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Ceil&quot;,
+            &quot;desc&quot;: &quot;Returns a Vector rounded to higher integer at each dimension.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;pow&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 215,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Cross&quot;,
+            &quot;desc&quot;: &quot;Returns the cross product.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;other&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 228,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;DotProduct&quot;,
+            &quot;desc&quot;: &quot;Returns the dot product.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;other&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 287,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Dot&quot;,
+            &quot;desc&quot;: &quot;Returns the dot product as single number.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;other&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 301,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Lerp&quot;,
+            &quot;desc&quot;: &quot;Constructs a vector interpolated between second vector by alpha.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;goal&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;alpha&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 312,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;ToVector3&quot;,
+            &quot;desc&quot;: &quot;Takes the first two dimensions of vector and constructs a Roblox Vector3. Will use 0 for relevant dimensions if vector has a size below 3.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector3\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 322,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;ToVector2&quot;,
+            &quot;desc&quot;: &quot;Takes the first two dimensions of vector and constructs a Roblox Vector2. Will use 0 for relevant dimensions if Vector has a size below 2.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector2\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 329,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;zero&quot;,
+            &quot;desc&quot;: &quot;Constructs vector with specified size and a magnitude of 0&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;size&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 336,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;fromVector3&quot;,
+            &quot;desc&quot;: &quot;Constructs vector from Vector3&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v3&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector3&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 346,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;fromVector2&quot;,
+            &quot;desc&quot;: &quot;Constructs vector from Vector2&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;v2&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector2&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 352,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;one&quot;,
+            &quot;desc&quot;: &quot;Provides a vector of specified size with a 1 in each dimension&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;size&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 358,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;identity&quot;,
+            &quot;desc&quot;: &quot;Returns a vector of specified size with a 1 at the specified index.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;size&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;index&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;Vector\n&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 368,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;new&quot;,
+            &quot;desc&quot;: &quot;constructs a new vector from number parameters&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;...&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;number&quot;
+                }
+            ],
+            &quot;returns&quot;: [],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 393,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [
+        {
+            &quot;name&quot;: &quot;Size&quot;,
+            &quot;desc&quot;: &quot;The dimension of the vector, for example a Vector3 would have a size of 3.&quot;,
+            &quot;lua_type&quot;: &quot;number&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 383,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Type&quot;,
+            &quot;desc&quot;: &quot;An identifier for the class&quot;,
+            &quot;lua_type&quot;: &quot;string&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 387,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;Magnitude&quot;,
+            &quot;desc&quot;: &quot;The length of a line across all dimensions, similar to how the magnitude of a Vector2 is the length of the hypotenuse of a right triangle given the side lengths of X and Y.&quot;,
+            &quot;lua_type&quot;: &quot;number&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 391,
+                &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+            }
+        }
+    ],
+    &quot;types&quot;: [],
+    &quot;name&quot;: &quot;Vector&quot;,
+    &quot;desc&quot;: &quot;A N-Dimensional vector class with similar API formatting to Roblox&#x27;s native Vector2 and Vector3 datatypes.\nWhen not indexing the properties or functions, you can also index specific dimensional values by their dimension number. For example indexing the Y value of a 3 dimensional vector would be vector[2].&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 7,
+        &quot;path&quot;: &quot;src/Algebra/Vector/init.lua&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#Magnitude" class="table-of-contents__link toc-highlight">Magnitude</a></li><li><a href="#Size" class="table-of-contents__link toc-highlight">Size</a></li><li><a href="#Type" class="table-of-contents__link toc-highlight">Type</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#__add" class="table-of-contents__link toc-highlight">:__add</a></li><li><a href="#__div" class="table-of-contents__link toc-highlight">:__div</a></li><li><a href="#__eq" class="table-of-contents__link toc-highlight">:__eq</a></li><li><a href="#__mod" class="table-of-contents__link toc-highlight">:__mod</a></li><li><a href="#__mul" class="table-of-contents__link toc-highlight">:__mul</a></li><li><a href="#__newindex" class="table-of-contents__link toc-highlight">:__newindex</a></li><li><a href="#__pow" class="table-of-contents__link toc-highlight">:__pow</a></li><li><a href="#__sub" class="table-of-contents__link toc-highlight">:__sub</a></li><li><a href="#__tostring" class="table-of-contents__link toc-highlight">:__tostring</a></li><li><a href="#Ceil" class="table-of-contents__link toc-highlight">:Ceil</a></li><li><a href="#Cross" class="table-of-contents__link toc-highlight">:Cross</a></li><li><a href="#Dot" class="table-of-contents__link toc-highlight">:Dot</a></li><li><a href="#DotProduct" class="table-of-contents__link toc-highlight">:DotProduct</a></li><li><a href="#Floor" class="table-of-contents__link toc-highlight">:Floor</a></li><li><a href="#Lerp" class="table-of-contents__link toc-highlight">:Lerp</a></li><li><a href="#Round" class="table-of-contents__link toc-highlight">:Round</a></li><li><a href="#ToScalars" class="table-of-contents__link toc-highlight">:ToScalars</a></li><li><a href="#ToVector2" class="table-of-contents__link toc-highlight">:ToVector2</a></li><li><a href="#ToVector3" class="table-of-contents__link toc-highlight">:ToVector3</a></li><li><a href="#fromVector2" class="table-of-contents__link toc-highlight">.fromVector2</a></li><li><a href="#fromVector3" class="table-of-contents__link toc-highlight">.fromVector3</a></li><li><a href="#identity" class="table-of-contents__link toc-highlight">.identity</a></li><li><a href="#new" class="table-of-contents__link toc-highlight">.new</a></li><li><a href="#one" class="table-of-contents__link toc-highlight">.one</a></li><li><a href="#zero" class="table-of-contents__link toc-highlight">.zero</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 Nightcycle Studios LLC. Built with Moonwave and Docusaurus</div></div></div></footer></div>
+<script src="/luau-math/assets/js/runtime~main.31e8107f.js"></script>
+<script src="/luau-math/assets/js/main.e5435c94.js"></script>
+</body>
+</html>
