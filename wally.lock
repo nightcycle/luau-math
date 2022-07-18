@@ -3,16 +3,6 @@
 registry = "test"
 
 [[package]]
-name = "nightcycle/boat-graph"
-version = "1.0.2"
-dependencies = [["maid", "quenty/maid@2.0.1-canary.140ed9d6.1"]]
-
-[[package]]
 name = "nightcycle/math"
-version = "2.2.1"
-dependencies = [["graph", "nightcycle/boat-graph@1.0.2"]]
-
-[[package]]
-name = "quenty/maid"
-version = "2.0.1-canary.140ed9d6.1"
+version = "3.5.7"
 dependencies = []

@@ -1,4 +1,3 @@
-
 --!strict
 local Vector = require(script.Parent.Parent:WaitForChild("Algebra"):WaitForChild("Vector"))
 type Vector = Vector.Vector
@@ -7,7 +6,7 @@ local Matrix = require(script.Parent.Parent:WaitForChild("Algebra"):WaitForChild
 type Matrix = Matrix.Matrix
 
 local Solver = require(script.Parent:WaitForChild("Solver"))
-type Solver = Solver.Solver
+type NoiseSolver = Solver.NoiseSolver
 
 local Cellular = {}
 Cellular.__index = Cellular
@@ -22,7 +21,7 @@ function Cellular:Get(vec: Vector): number
 	local farthest: Vector
 	local fDist: number = 0
 
-	for i, point in ipairs(points) do
+	for i, point: Vector in ipairs(points) do
 		local dist = (point - vec).Magnitude
 		if not closest or dist < cDist then
 			closest = point
@@ -34,18 +33,18 @@ function Cellular:Get(vec: Vector): number
 		end
 	end
 
-	local base = cDist/self.SeparationLimit
+	local base = cDist / self.SeparationLimit
 	-- local base = math.abs(alpha-0.5)*2
 
 	return self:_Compile(vec, base)
 end
 
-function Cellular:Clone(): Solver
+function Cellular:Clone(): NoiseSolver
 	local obj = Cellular.new()
 	return self:_CopyConfiguration(obj)
 end
 
-function Cellular.new(...)
+function Cellular.new(...): NoiseSolver
 	local self = Solver.new(...)
 	self.Points = {}
 	setmetatable(self, Cellular)

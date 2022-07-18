@@ -15,7 +15,7 @@ local WedgePartSolver = require(script:WaitForChild("WedgePart"))
 local TetraPartSolver = require(script:WaitForChild("TetraPart"))
 local CornerWedgePartSolver = require(script:WaitForChild("CornerWedgePart"))
 
-function getSolver(basePart: BasePart): (BasePart) -> any|nil
+function getSolver(basePart: BasePart): (BasePart) -> any | nil
 	local result: any
 	if basePart:IsA("CornerWedgePart") then
 		result = CornerWedgePartSolver
@@ -29,22 +29,22 @@ function getSolver(basePart: BasePart): (BasePart) -> any|nil
 	return result
 end
 
-function Mesh.getVertices(basePart: BasePart): {[number]: Vertex}
-	local solver:any = getSolver(basePart)
+function Mesh.getVertices(basePart: BasePart): { [number]: Vertex }
+	local solver: any = getSolver(basePart)
 	return solver.getVertices(basePart)
 end
 
-function Mesh.getLines(basePart: BasePart): {[string]: Line}
-	local solver:any = getSolver(basePart)
+function Mesh.getLines(basePart: BasePart): { [string]: Line }
+	local solver: any = getSolver(basePart)
 	return solver.getLines(basePart)
 end
 
-function Mesh.getSurfaces(basePart: BasePart): {[Face]: Surface}
-	local solver:any = getSolver(basePart)
+function Mesh.getSurfaces(basePart: BasePart): { [Face]: Surface }
+	local solver: any = getSolver(basePart)
 	return solver.getSurfaces(basePart)
 end
 
-function Mesh.solveGreedyMesh(grid: {[Vector3]: boolean})
+function Mesh.solveGreedyMesh(grid: { [Vector3]: boolean })
 	-- print("Grid", grid)
 	local registry = {}
 	local regions = {}
@@ -66,18 +66,18 @@ function Mesh.solveGreedyMesh(grid: {[Vector3]: boolean})
 				return try(newC3)
 			end
 			local xMax = c3.X
-			
-			while tryX(xMax+1) do
+
+			while tryX(xMax + 1) do
 				xMax += 1
 			end
 			local xMin = c3.X
-			while tryX(xMin-1) do
+			while tryX(xMin - 1) do
 				xMin -= 1
 			end
-			
+
 			--get y range
 			local function tryXY(newY)
-				for x=xMin, xMax do
+				for x = xMin, xMax do
 					local newC3 = Vector3.new(x, newY, c3.Z)
 					if not try(newC3) then
 						return false
@@ -86,18 +86,18 @@ function Mesh.solveGreedyMesh(grid: {[Vector3]: boolean})
 				return true
 			end
 			local yMax = c3.Y
-			while tryXY(yMax+1) do
+			while tryXY(yMax + 1) do
 				yMax += 1
 			end
 			local yMin = c3.Y
-			while tryXY(yMin-1) do
+			while tryXY(yMin - 1) do
 				yMin -= 1
 			end
 
 			--get z range
 			local function tryXYZ(newZ)
-				for x=xMin, xMax do
-					for y=yMin, yMax do
+				for x = xMin, xMax do
+					for y = yMin, yMax do
 						local newC3 = Vector3.new(x, y, newZ)
 						if not try(newC3) then
 							return false
@@ -107,24 +107,24 @@ function Mesh.solveGreedyMesh(grid: {[Vector3]: boolean})
 				return true
 			end
 			local zMax = c3.Z
-			while tryXYZ(zMax+1) do
+			while tryXYZ(zMax + 1) do
 				zMax += 1
 			end
 			local zMin = c3.Z
-			while tryXYZ(zMin-1) do
+			while tryXYZ(zMin - 1) do
 				zMin -= 1
 			end
 
 			--create region
-			table.insert(regions, {Vector3.new(xMin, yMin, zMin), Vector3.new(xMax, yMax, zMax)})
-			for x=xMin, xMax do
-				for y=yMin, yMax do
-					for z=zMin, zMax do
+			table.insert(regions, { Vector3.new(xMin, yMin, zMin), Vector3.new(xMax, yMax, zMax) })
+			for x = xMin, xMax do
+				for y = yMin, yMax do
+					for z = zMin, zMax do
 						registry[Vector3.new(x, y, z)] = #regions
 					end
 				end
 			end
-		-- else
+			-- else
 			-- print("Already incorporated")
 		end
 	end
@@ -132,9 +132,11 @@ function Mesh.solveGreedyMesh(grid: {[Vector3]: boolean})
 	return regions
 end
 
-function Mesh.getBoundingBoxAtCFrame(orientation: CFrame, parts: {[number]: BasePart})
+function Mesh.getBoundingBoxAtCFrame(orientation: CFrame, parts: { [number]: BasePart })
 	-- print("A")
-	if #parts == 0 then return Vector3.new(0,0,0), CFrame.new(0,0,0) end
+	if #parts == 0 then
+		return Vector3.new(0, 0, 0), CFrame.new(0, 0, 0)
+	end
 	-- print("B")
 	local minX = math.huge
 	local minY = math.huge
@@ -165,13 +167,14 @@ function Mesh.getBoundingBoxAtCFrame(orientation: CFrame, parts: {[number]: Base
 	local maxV3 = Vector3.new(maxX, maxY, maxZ)
 	-- print("Min", minV3, "Max", maxV3)
 
-	local centerCF = orientation * CFrame.fromMatrix(minV3:Lerp(maxV3, 0.5), orientation.XVector, orientation.YVector, orientation.ZVector)
+	local centerCF = orientation
+		* CFrame.fromMatrix(minV3:Lerp(maxV3, 0.5), orientation.XVector, orientation.YVector, orientation.ZVector)
 	local size = maxV3 - minV3
 	return size, centerCF
 end
 
-function Mesh.getBoundingBox(parts: {[number]: BasePart}, worldCF: CFrame | nil)
-	worldCF = worldCF or CFrame.new(0,0,0)
+function Mesh.getBoundingBox(parts: { [number]: BasePart }, worldCF: CFrame | nil)
+	worldCF = worldCF or CFrame.new(0, 0, 0)
 	assert(worldCF ~= nil)
 	local minX
 	local minY
@@ -182,8 +185,8 @@ function Mesh.getBoundingBox(parts: {[number]: BasePart}, worldCF: CFrame | nil)
 	for i, part in ipairs(parts) do
 		if part:IsA("BasePart") then
 			local offsetCF = worldCF:Inverse() * part.CFrame
-			local maxCorner = offsetCF * CFrame.new(part.Size*0.5).p
-			local minCorner = offsetCF * CFrame.new(-part.Size*0.5).p
+			local maxCorner = offsetCF * CFrame.new(part.Size * 0.5).p
+			local minCorner = offsetCF * CFrame.new(-part.Size * 0.5).p
 			local x1 = minCorner.X
 			-- sort(minX, maxX, x1)
 			if not minX or minX > x1 then
@@ -239,12 +242,8 @@ function Mesh.getBoundingBox(parts: {[number]: BasePart}, worldCF: CFrame | nil)
 	local maxV3 = Vector3.new(maxX, maxY, maxZ)
 	-- print("Min", minV3, "Max", maxV3)
 	local size = maxV3 - minV3
-	local center = minV3 + size*0.5
-	local cf = CFrame.fromMatrix((worldCF*CFrame.new(center)).p,
-		worldCF.XVector,
-		worldCF.YVector,
-		worldCF.ZVector
-	)
+	local center = minV3 + size * 0.5
+	local cf = CFrame.fromMatrix((worldCF * CFrame.new(center)).p, worldCF.XVector, worldCF.YVector, worldCF.ZVector)
 	return cf, size
 end
 

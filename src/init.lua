@@ -1,14 +1,4 @@
 --!strict
-
-local Math = {}
-function Math:__index(k)
-	if rawget(Math, k) then
-		return rawget(Math, k)
-	else
-		return math[k]
-	end
-end
-
 local types = require(script:WaitForChild("Types"))
 export type Point = types.Point
 export type Vertex = types.Vertex
@@ -21,43 +11,79 @@ export type Radian = types.Radian
 export type Degree = types.Degree
 export type Face = types.Face
 export type Roundable = types.Roundable
+export type Alpha = number
+export type Integer = number
+export type Float = number
+export type Double = number
 
-function Math.round(v: Roundable, interval: number) : Roundable | nil
+local function round(v: any, interval: number?): any
 	interval = interval or 1
-	local result: Roundable | nil
+	assert(interval ~= nil)
 	if typeof(v) == "number" then
-		result = math.round(v/interval)*interval
+		return math.round(v / interval) * interval
 	elseif typeof(v) == "Vector2" then
-		result = Vector2.new(
-			Math.round(v.X, interval) :: number,
-			Math.round(v.Y, interval) :: number
-		)
+		return Vector2.new(round(v.X, interval), round(v.Y, interval))
 	elseif typeof(v) == "Vector3" then
-		result = Vector3.new(
-			Math.round(v.X, interval) :: number,
-			Math.round(v.Y, interval) :: number,
-			Math.round(v.Z, interval) :: number
-		)
+		return Vector3.new(round(v.X, interval), round(v.Y, interval), round(v.Z, interval))
 	elseif typeof(v) == "Color3" then
-		result = Color3.new(
-			Math.round(v.R, interval) :: number,
-			Math.round(v.G, interval) :: number,
-			Math.round(v.B, interval) :: number
-		)
+		return Color3.new(round(v.R, interval), round(v.G, interval), round(v.B, interval))
 	elseif typeof(v) == "CFrame" then
-		result = CFrame.fromMatrix(
-			Math.round(v.Position, interval) :: Vector3,
-			Math.round(v.XVector, interval) :: Vector3,
-			Math.round(v.YVector, interval) :: Vector3,
-			Math.round(v.ZVector, interval) :: Vector3
+		return CFrame.fromMatrix(
+			round(v.Position, interval),
+			round(v.XVector, interval),
+			round(v.YVector, interval),
+			round(v.ZVector, interval)
 		)
 	end
-	return result
+	return v
 end
 
-Math.Geometry = require(script:WaitForChild("Geometry"))
-Math.Mesh = require(script:WaitForChild("Mesh"))
-Math.Algebra = require(script:WaitForChild("Algebra"))
-Math.Noise = require(script:WaitForChild("Noise"))
+local Geometry = require(script:WaitForChild("Geometry"))
+local Mesh = require(script:WaitForChild("Mesh"))
+local Algebra = require(script:WaitForChild("Algebra"))
+local Noise = require(script:WaitForChild("Noise"))
+export type Vector = Algebra.Vector
+export type Matrix = Algebra.Matrix
+export type NoiseSolver = Noise.NoiseSolver
+export type BezierSolver<T> = Algebra.BezierSolver<T>
 
-return setmetatable({}, Math)
+return {
+	abs = math.abs,
+	acos = math.acos,
+	asin = math.asin,
+	atan = math.atan,
+	atan2 = math.atan2,
+	ceil = math.ceil,
+	clamp = math.clamp,
+	cos = math.cos,
+	cosh = math.cosh,
+	deg = math.deg,
+	exp = math.exp,
+	floor = math.floor,
+	fmod = math.fmod,
+	frexp = math.frexp,
+	ldexp = math.ldexp,
+	log = math.log,
+	log10 = math.log10,
+	max = math.max,
+	min = math.min,
+	modf = math.modf,
+	noise = math.noise,
+	pow = math.pow,
+	rad = math.rad,
+	random = math.random,
+	randomseed = math.randomseed,
+	sign = math.sign,
+	sin = math.sin,
+	sinh = math.sinh,
+	sqrt = math.sqrt,
+	tan = math.tan,
+	tanh = math.tanh,
+	huge = math.huge,
+	pi = math.pi,
+	round = round,
+	Geometry = Geometry,
+	Mesh = Mesh,
+	Algebra = Algebra,
+	Noise = Noise,
+}
