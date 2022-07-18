@@ -35,5 +35,3 @@ These are a bit more ambitious, but they're on my wishlist.
 
 ## Contributing
 If you have some useful code that you want to contribute feel free to let me know or just make a pull request. The only requirement is that it's strictly typed and documented via moonwave. If that's a bit too annoying feel free to make a pull request anyways I can just handle the formatting.
-
-# License

@@ -1,5 +1,5 @@
 {
-  "name": "math",
+  "name": "luau-math",
   "tree": {
     "$path": "src"
   }

@@ -15,6 +15,7 @@ export type Integer = number
 export type Float = number
 export type Double = number
 
+
 local Geometry = require(script:WaitForChild("Geometry"))
 local Mesh = require(script:WaitForChild("Mesh"))
 local Algebra = require(script:WaitForChild("Algebra"))
@@ -25,7 +26,7 @@ export type NoiseSolver = Noise.NoiseSolver
 export type BezierSolver<T> = Algebra.BezierSolver<T>
 
 --- @class Math
---- A basic utility for your everyday Roblox dev math needs. You can also access every function available on 
+--- A basic utility for your everyday Roblox dev math needs. It also includes all native lua math functions. All types included in API are exported for easy reuse in a wider project.
 local Math = {
 	abs = math.abs,
 	acos = math.acos,
@@ -68,7 +69,6 @@ local Math = {
 
 type omniRound<T> = (v: T, interval: number) -> T
 type roundable = number | Vector2 | Vector3 | Color3 | CFrame
-local round: omniRound<roundable>
 
 --- Rounds the value to the nearest interval. For example 0.93567, at interval 0.05, would become 0.95
 function Math.round(v: roundable, interval: number?)
@@ -77,35 +77,35 @@ function Math.round(v: roundable, interval: number?)
 	if typeof(v) == "number" then
 		return math.round(v / interval) * interval
 	elseif typeof(v) == "Vector2" then
-		local fX: roundable = round(v.X, interval)
+		local fX: roundable = Math.round(v.X, interval)
 		assert(typeof(fX) == "number")
-		local fY: roundable = round(v.Y, interval)
+		local fY: roundable = Math.round(v.Y, interval)
 		assert(typeof(fY) == "number")
 		return Vector2.new(fX, fY)
 	elseif typeof(v) == "Vector3" then
-		local fX: roundable = round(v.X, interval)
+		local fX: roundable = Math.round(v.X, interval)
 		assert(typeof(fX) == "number")
-		local fY: roundable = round(v.X, interval)
+		local fY: roundable = Math.round(v.X, interval)
 		assert(typeof(fY) == "number")
-		local fZ: roundable = round(v.Z, interval)
+		local fZ: roundable = Math.round(v.Z, interval)
 		assert(typeof(fZ) == "number")
 		return Vector3.new(fX, fY, fZ)
 	elseif typeof(v) == "Color3" then
-		local fR: roundable = round(v.R, interval)
+		local fR: roundable = Math.round(v.R, interval)
 		assert(typeof(fR) == "number")
-		local fG: roundable = round(v.G, interval)
+		local fG: roundable = Math.round(v.G, interval)
 		assert(typeof(fG) == "number")
-		local fB: roundable = round(v.B, interval)
+		local fB: roundable = Math.round(v.B, interval)
 		assert(typeof(fB) == "number")
 		return Color3.new(fR, fG, fB)
 	elseif typeof(v) == "CFrame" then
-		local pos: roundable = round(v.Position, interval)
+		local pos: roundable = Math.round(v.Position, interval)
 		assert(typeof(pos) == "Vector3")
-		local xVec: roundable = round(v.XVector, interval)
+		local xVec: roundable = Math.round(v.XVector, interval)
 		assert(typeof(xVec) == "Vector3")
-		local yVec: roundable = round(v.YVector, interval)
+		local yVec: roundable = Math.round(v.YVector, interval)
 		assert(typeof(yVec) == "Vector3")
-		local zVec: roundable = round(v.ZVector, interval)
+		local zVec: roundable = Math.round(v.ZVector, interval)
 		assert(typeof(zVec) == "Vector3")
 		return CFrame.fromMatrix(pos, xVec, yVec, zVec)
 	end
