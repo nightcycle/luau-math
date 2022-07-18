@@ -22,12 +22,26 @@ export type Direction = types.Direction
 export type Line = types.Line
 export type Radian = types.Radian
 
+--- @class Geometry
+--- A long list of geometry related functions. Consider rounding your vectors to the nearest hundredth as the smallest difference can fail an equality test.
 local Geometry = {}
 
+Geometry.__index = Geometry
+
+Geometry.phi = (1 + 5^0.5)/2
+
+
+--- @prop phi number
+--- @within Geometry
+--- It's a constant, no need to keep resolving for it.
+
+
+--- Gets length of line.
 function Geometry.getLineLength(line: Line): number
 	return (line[1] - line[2]).Magnitude
 end
 
+--- Performs getLineLength on a list of lines.
 function Geometry.getLineLengths(lines: { [any]: Line }): { [any]: number }
 	local lineLengths = {}
 	for k, line in pairs(lines) do
@@ -36,10 +50,12 @@ function Geometry.getLineLengths(lines: { [any]: Line }): { [any]: number }
 	return lineLengths
 end
 
+--- Gets a point at center of line.
 function Geometry.getLineCenter(line: Line): Point
 	return line[1]:Lerp(line[2], 0.5)
 end
 
+--- Performs getLineCenter on a list of lines.
 function Geometry.getLineCenters(lines: { [any]: Line }): { [any]: Point }
 	local lineCenters = {} :: { [any]: Point }
 	for k, line in pairs(lines) do
@@ -48,10 +64,12 @@ function Geometry.getLineCenters(lines: { [any]: Line }): { [any]: Point }
 	return lineCenters
 end
 
+--- Gets the axis running parallel to the line.
 function Geometry.getLineAxis(line: Line): Axis
 	return (line[1] - line[2]).Unit
 end
 
+--- Performs getLineAxis on a list of lines.
 function Geometry.getLineAxes(lines: { [string]: Line }): { [string]: Axis }
 	local lineAxes = {}
 	for k, line in pairs(lines) do
@@ -60,6 +78,7 @@ function Geometry.getLineAxes(lines: { [string]: Line }): { [string]: Axis }
 	return lineAxes
 end
 
+--- Finds if two verticies share a line from a list of lines.
 function Geometry.getIfVerticesConnected(a: Vertex, b: Vertex, lines: { [any]: Line }): boolean
 	for k, line in pairs(lines) do
 		if (line[1] == a and line[2] == b) or (line[1] == b and line[2] == a) then
@@ -69,6 +88,7 @@ function Geometry.getIfVerticesConnected(a: Vertex, b: Vertex, lines: { [any]: L
 	return false
 end
 
+--- Filters out any lines that don't connect to the main vertex.
 function Geometry.getConnectedVertices(vertex: Vertex, lines: { [any]: Line }): { [number]: Vertex }
 	local connections = {}
 	for k, line in pairs(lines) do
@@ -81,6 +101,7 @@ function Geometry.getConnectedVertices(vertex: Vertex, lines: { [any]: Line }): 
 	return connections
 end
 
+--- Compiles a deduplicated list of every unique vertex in a list of lines.
 function Geometry.getAllVerticesFromLines(lines: { [string]: Line }): { [number]: Vertex }
 	local vertices = {}
 	for k, line in pairs(lines) do
@@ -90,6 +111,7 @@ function Geometry.getAllVerticesFromLines(lines: { [string]: Line }): { [number]
 	return deduplicateList(vertices)
 end
 
+--- Creates an indexable dictionary of the vertices each vertex is connected to.
 function Geometry.getAllVertexConnectionsFromLines(lines: { [string]: Line }): { [Vertex]: { [number]: Vertex } }
 	local connectedVertexRegistry: { [Vertex]: { [Vertex]: boolean } } = {}
 	for k, line in pairs(lines) do
@@ -109,6 +131,7 @@ function Geometry.getAllVertexConnectionsFromLines(lines: { [string]: Line }): {
 	return connectedVertices
 end
 
+--- Gets if two lins share a vertex.
 function Geometry.getSharedVertex(line1: Line, line2: Line): Vertex?
 	local result: Vector3?
 	for i, a in ipairs(line1) do
@@ -122,6 +145,7 @@ function Geometry.getSharedVertex(line1: Line, line2: Line): Vertex?
 	return result
 end
 
+--- Finds if the two lines make a right angle at the vertex
 function Geometry.getIfRightAngle(vertex: Vertex, line1: Line, line2: Line): boolean
 	local connectedVertices = Geometry.getConnectedVertices(vertex, { line1, line2 })
 	local norm1: Normal = (vertex - connectedVertices[1]).Unit
@@ -130,23 +154,28 @@ function Geometry.getIfRightAngle(vertex: Vertex, line1: Line, line2: Line): boo
 	return math.round(dot * 100) / 100 == 0
 end
 
-function Geometry.getIfRightAngleFromVertices(sharedVertex: Vertex, vertices: { [number]: Vector3 }): boolean
-	local line1: Line = { sharedVertex, vertices[1] }
-	local line2: Line = { sharedVertex, vertices[2] }
+--- Finds if a set of vertices make a right angle.
+function Geometry.getIfRightAngleFromVertices(sharedVertex: Vertex, a: Vertex, b: Vertex): boolean
+	local line1: Line = { sharedVertex, a }
+	local line2: Line = { sharedVertex, b }
 	return Geometry.getIfRightAngle(sharedVertex, line1, line2)
 end
 
+--- Gets a point at center of line.
 function Geometry.getRightAngleVertices(lines: { [string]: Line }): { [number]: Vertex }
 	local connectedVertices = Geometry.getAllVertexConnectionsFromLines(lines)
 	local rightAngles = {}
 	for v, connections in pairs(connectedVertices) do
-		if Geometry.getIfRightAngleFromVertices(v, { connections[1], connections[2] }) then
+		local a: Vertex = connections[1]
+		local b: Vertex = connections[2]
+		if Geometry.getIfRightAngleFromVertices(v, a, b) then
 			table.insert(rightAngles, v)
 		end
 	end
 	return rightAngles
 end
 
+--- Gets the point of intersection between two lines, lerping between the closest points if none exist.
 function Geometry.getIntersectionBetweenTwoLines(line1: Line, line2: Line): Point?
 	local p1: types.Point? = Geometry.getClosestPointToLineOnLine(line1, line2)
 	if not p1 then
@@ -162,6 +191,7 @@ function Geometry.getIntersectionBetweenTwoLines(line1: Line, line2: Line): Poin
 	return p1:Lerp(p2, 0.5)
 end
 
+--- When provided a quadrangular or triangular surface's lines it will return an indexable dictionary of the point on the lins opposite a vertex, rounding to the nearest vertex if an even number of vertices.
 function Geometry.getVertexOppositePointsFromLines(lines: { [any]: Line }): { [Vertex]: Point }
 	local corners: { [number]: Vertex } = Geometry.getRightAngleVertices(lines)
 	local vertices: { [number]: Vertex } = Geometry.getAllVerticesFromLines(lines)
@@ -199,6 +229,7 @@ function Geometry.getVertexOppositePointsFromLines(lines: { [any]: Line }): { [V
 	return oppositeRegistry
 end
 
+--- Creates a list of lines connecting opposite points on any quadrangle or triangle. 
 function Geometry.getDiagonalLinesFromEdges(lines: { [any]: Line }): { [number]: Line }
 	local opposites: { [Vertex]: Point } = Geometry.getVertexOppositePointsFromLines(lines)
 
@@ -217,6 +248,7 @@ function Geometry.getDiagonalLinesFromEdges(lines: { [any]: Line }): { [number]:
 	return diagonals
 end
 
+--- Gets the perimeter of a triangle from its vertices
 function Geometry.getTrianglePerimeter(a: Vertex, b: Vertex, c: Vertex): number
 	local ab: number = (a - b).Magnitude
 	local bc: number = (b - c).Magnitude
@@ -224,6 +256,7 @@ function Geometry.getTrianglePerimeter(a: Vertex, b: Vertex, c: Vertex): number
 	return ab + bc + ca
 end
 
+--- Gets the area of a triangle from its vertices
 function Geometry.getTriangleArea(a: Vertex, b: Vertex, c: Vertex): number --heron's formula
 	local perimeter: number = Geometry.getTrianglePerimeter(a, b, c)
 	local semiPerimeterLength: number = perimeter / 2
@@ -239,6 +272,7 @@ function Geometry.getTriangleArea(a: Vertex, b: Vertex, c: Vertex): number --her
 	return math.sqrt(semiPerimeterLength * deltaA * deltaB * deltaC)
 end
 
+--- gets if a point parallel to the surface of the triangle exists within the perimeter. All unparallel points will return false.
 function Geometry.getIfPointIsInTriangle(point: Point, a: Vertex, b: Vertex, c: Vertex): boolean
 	local abc = Geometry.getTriangleArea(a, b, c)
 	local pbc = Geometry.getTriangleArea(point, b, c)
@@ -246,22 +280,24 @@ function Geometry.getIfPointIsInTriangle(point: Point, a: Vertex, b: Vertex, c: 
 	return abc == pbc + abc + abp
 end
 
-function Geometry.getAngleThroughLawOfCos(lineA: Line, lineB: Line, lineC: Line): Radian
-	local a = Geometry.getLineLength(lineA)
-	local b = Geometry.getLineLength(lineB)
-	local c = Geometry.getLineLength(lineC)
-	if math.round(1000 * (a + b)) == math.round(1000 * c) then
+--- gets the angle of vertex B when provided three lines composing a triangle.
+function Geometry.getAngleThroughLawOfCos(ab: Line, bc: Line, ca: Line): Radian
+	local abLen = Geometry.getLineLength(ab)
+	local bcLen = Geometry.getLineLength(bc)
+	local caLen = Geometry.getLineLength(ca)
+	if math.round(1000 * (abLen + bcLen)) == math.round(1000 * caLen) then
 		return 0
 	end
 	-- print("A", a, "B", b, "C", c)
-	local numerator = (a ^ 2) + (b ^ 2) - (c ^ 2)
-	local denominator = (2 * a * b)
+	local numerator = (abLen ^ 2) + (bcLen ^ 2) - (caLen ^ 2)
+	local denominator = (2 * abLen * bcLen)
 	local frac = numerator / denominator
 	local angle = math.acos(frac)
 
 	return angle
 end
 
+--- Converts each line into a normal then finds the angle of both normals when they're set to the same origin.
 function Geometry.getAngleBetweenTwoLines(line1: Line, line2: Line): Radian
 	local corner = Geometry.getSharedVertex(line1, line2)
 	local line3 = {
@@ -271,12 +307,14 @@ function Geometry.getAngleBetweenTwoLines(line1: Line, line2: Line): Radian
 	return Geometry.getAngleThroughLawOfCos(line1, line2, line3)
 end
 
-function Geometry.getSideLengthThroughLawOfCos(angle: number, lineA: Line, lineB: Line): number
-	local a: number = Geometry.getLineLength(lineA)
-	local b: number = Geometry.getLineLength(lineB)
-	return math.sqrt((a ^ 2) + (b ^ 2) - (2 * a * b * math.cos(angle)))
+--- Gets the side length CA using an the angle of vertex B
+function Geometry.getSideLengthThroughLawOfCos(b: Radian, ab: Line, bc: Line): number
+	local abLen: number = Geometry.getLineLength(ab)
+	local bcLen: number = Geometry.getLineLength(bc)
+	return math.sqrt((abLen ^ 2) + (bcLen ^ 2) - (2 * abLen * bcLen * math.cos(b)))
 end
 
+--- Finds a normal perpindicular to the line that faces inwards and is parallel to the surface.
 function Geometry.getLineInwardNormal(
 	line: Line,
 	centerPoint: Vector3
@@ -294,6 +332,7 @@ function Geometry.getLineInwardNormal(
 	end
 end
 
+--- Finds point in list closest to provided point.
 function Geometry.getClosestPointInList(point: Point, list: { [number]: Point }): Point
 	local closestPoint
 	local closestDist = math.huge
@@ -307,6 +346,7 @@ function Geometry.getClosestPointInList(point: Point, list: { [number]: Point })
 	return closestPoint
 end
 
+--- Finds point in list farthest to provided point
 function Geometry.getFarthestPointInList(point: Point, list: { [number]: Point }): Point
 	local farthestPoint
 	local farthestDist = 0
@@ -320,6 +360,7 @@ function Geometry.getFarthestPointInList(point: Point, list: { [number]: Point }
 	return farthestPoint
 end
 
+--- Finds the closest point on the line to the provided point.
 function Geometry.getClosestPointOnLine(point: Point, line: Line)
 	local start: Vertex = line[1]
 	local fin: Vertex = line[2]
@@ -331,6 +372,7 @@ function Geometry.getClosestPointOnLine(point: Point, line: Line)
 	return start + (fin - start).Unit * adjDist
 end
 
+--- Finds the line that comes closest to the point. Chooses arbitrarily when lines are equidistant.
 function Geometry.getLineClosestToPoint(point: Point, lines: { [any]: Line }): Line
 	local closestLine
 	local closestDist = math.huge
@@ -345,6 +387,7 @@ function Geometry.getLineClosestToPoint(point: Point, lines: { [any]: Line }): L
 	return closestLine
 end
 
+--- Gets a point at the center of a quadrangular or triangular surface when provides its lines. 
 function Geometry.getCenterFromLines(lines: { [any]: Line }): Point?
 	local diagonals: { [number]: Line } = Geometry.getDiagonalLinesFromEdges(lines)
 	local result: Point?
@@ -370,6 +413,7 @@ function Geometry.getCenterFromLines(lines: { [any]: Line }): Point?
 	return result
 end
 
+--- Returns a cframe with the YVec parallel to the surface and the XVec perpindicular to the longest line.
 function Geometry.getSurfaceCFrameFromLines(lines: { [any]: Line }, normal: Normal): CFrame
 	local longestLine: Line = nil
 	local longestLength: number = 0
@@ -392,6 +436,7 @@ function Geometry.getSurfaceCFrameFromLines(lines: { [any]: Line }, normal: Norm
 	return CFrame.fromMatrix(centerPoint, xVec, yVec, zVec)
 end
 
+--- Finds the min and max points on a rotated box. Min / Max status are found in object space, not global space.
 function Geometry.getBoxBoundaries(cf: CFrame, size: Vector3): (Point, Point)
 	local half = size * 0.5
 	local min: Point = (cf * CFrame.new(-half.X, -half.Y, -half.Z)).Position
@@ -399,24 +444,26 @@ function Geometry.getBoxBoundaries(cf: CFrame, size: Vector3): (Point, Point)
 	return min, max
 end
 
+--- Finds intersection point and distance on a plane where normal hits plane from origin. If parallel it returns the origin the normal solves from.
 function Geometry.getPlaneIntersection(
-	point: Point,
+	origin: Point,
 	normal: Normal,
 	planeOrigin: Point,
 	planeAxis: Axis
 ): (Point, number)
-	local rpoint: Point = point - planeOrigin
+	local rpoint: Point = origin - planeOrigin
 	local dot: number = -math.abs(normal:Dot(planeAxis))
 
 	if dot == 0 then
-		return point, 0
+		return origin, 0
 	end
 
 	local dist: number = -rpoint:Dot(planeAxis) / dot
-	return point + dist * normal, dist
+	return origin + dist * normal, dist
 end
 
-function Geometry.getNonPerpindicularNormal(normal: Normal)
+--- Finds a normal that's not perpindicular to provided normal. I don't remember why I would ever need to do this, but I'm too afraid to remove it.
+function Geometry.getNonPerpindicularNormal(normal: Normal): Normal
 	local result = normal:Cross(Vector3.new(0, 1, 0))
 	if math.abs(result:Dot(normal)) == 1 then
 		result = normal:Cross(Vector3.new(1, 0, 0))
@@ -424,33 +471,36 @@ function Geometry.getNonPerpindicularNormal(normal: Normal)
 	return result
 end
 
-function Geometry.getSideLengthThroughLawOfSin(a: Radian, b: Radian, line: Line)
-	return (line[2] - line[1]).Magnitude * math.sin(a) / math.sin(b)
+--- When provided vertex A, vertex B, and line AC it solves for angle C
+function Geometry.getSideLengthThroughLawOfSin(a: Radian, b: Radian, ac: Line): number
+	return (ac[2] - ac[1]).Magnitude * math.sin(a) / math.sin(b)
 end
 
-function Geometry.getClosestPointToLineOnLine(line1: Line, line2: Line): Point?
-	local ori = line1[1]
-	local dir = line1[2] - line1[1]
+--- Finds closest point on line a to the closest point on line b 
+function Geometry.getClosestPointToLineOnLine(a: Line, b: Line): Point?
+	local ori = a[1]
+	local dir = a[2] - a[1]
 	local norm = dir.Unit
 
-	local oppOri = line2[1]
-	local oppDir = line2[2] - line2[1]
+	local oppOri = b[1]
+	local oppDir = b[2] - b[1]
 	local oppNorm = oppDir.Unit
 	if oppNorm:Dot(norm) > 0 then
-		oppOri = line2[2]
-		oppDir = line2[1] - line2[2]
+		oppOri = b[2]
+		oppDir = b[1] - b[2]
 		oppNorm = oppDir.Unit
 	end
 
 	local connectionLine = { ori, oppOri }
-	local angle1 = Geometry.getAngleBetweenTwoLines(connectionLine, line1)
-	local angle2 = Geometry.getAngleBetweenTwoLines(connectionLine, line2)
+	local angle1 = Geometry.getAngleBetweenTwoLines(connectionLine, a)
+	local angle2 = Geometry.getAngleBetweenTwoLines(connectionLine, b)
 	local oppAngle = angle2
 	local adjAngle = math.rad(180) - angle2 - angle1
 	local sideLen = Geometry.getSideLengthThroughLawOfSin(oppAngle, adjAngle, connectionLine)
 	return ori + norm * math.clamp(sideLen, 0, dir.Magnitude)
 end
 
+--- Gets the volume of a box with the provided dimensions.
 function Geometry.getVolume(size: Vector3): number
 	return size.X * size.Y * size.Z
 end

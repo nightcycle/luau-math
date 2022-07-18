@@ -6,7 +6,16 @@ type Normal = types.Normal
 type Axis = types.Axis
 type Line = types.Line
 type Surface = types.Surface
-type Face = types.Face
+
+local normals: {[string]: Enum.NormalId} = {
+	Top = Enum.NormalId.Top,
+	Bottom = Enum.NormalId.Bottom,
+	Back = Enum.NormalId.Back,
+	Front = Enum.NormalId.Front,
+	Right = Enum.NormalId.Right,
+	Left = Enum.NormalId.Left,
+}
+
 function getSurfaceCFrame(part: BasePart, lnormal: Normal): CFrame
 	local UP = Vector3.new(0, 1, 0)
 	local BACK = Vector3.new(0, 0, 1)
@@ -94,7 +103,7 @@ function module.getLines(wedge: BasePart): { [string]: Line }
 	}
 end
 
-function module.getSurfaces(wedge: BasePart): { [Face]: Surface }
+function module.getSurfaces(wedge: BasePart): { [Enum.NormalId]: Surface }
 	local lines = module.getLines(wedge)
 
 	local opposite = wedge.Size.Y
@@ -102,21 +111,21 @@ function module.getSurfaces(wedge: BasePart): { [Face]: Surface }
 	local angle = math.atan2(opposite, adjacent)
 
 	local vector = {
-		Top = getSurfaceCFrame(wedge, Vector3.new(0, 0, -1):Lerp(Vector3.new(0, 1, 0), math.cos(angle))).LookVector,
-		Bottom = getSurfaceCFrame(wedge, Vector3.new(0, -1, 0)).LookVector,
-		Left = getSurfaceCFrame(wedge, Vector3.new(-1, 0, 0)).LookVector,
-		Right = getSurfaceCFrame(wedge, Vector3.new(1, 0, 0)).LookVector,
-		Back = getSurfaceCFrame(wedge, Vector3.new(0, 0, 1)).LookVector,
+		[normals.Top] = getSurfaceCFrame(wedge, Vector3.new(0, 0, -1):Lerp(Vector3.new(0, 1, 0), math.cos(angle))).LookVector,
+		[normals.Bottom] = getSurfaceCFrame(wedge, Vector3.new(0, -1, 0)).LookVector,
+		[normals.Left] = getSurfaceCFrame(wedge, Vector3.new(-1, 0, 0)).LookVector,
+		[normals.Right] = getSurfaceCFrame(wedge, Vector3.new(1, 0, 0)).LookVector,
+		[normals.Back] = getSurfaceCFrame(wedge, Vector3.new(0, 0, 1)).LookVector,
 	}
 
-	local surfaces: { [Face]: Surface } = {}
+	local surfaces: { [Enum.NormalId]: Surface } = {}
 
 	for k, surfaceLineKeys in pairs({
-		Top = { "sTerrace", "nBorder", "eTerrace", "wTerrace" },
-		Bottom = { "sBorder", "nBorder", "eBorder", "wBorder" },
-		Right = { "seColumn", "eBorder", "eTerrace" },
-		Left = { "swColumn", "wBorder", "wTerrace" },
-		Back = { "seColumn", "swColumn", "sBorder", "sTerrace" },
+		[normals.Top] = { "sTerrace", "nBorder", "eTerrace", "wTerrace" },
+		[normals.Bottom] = { "sBorder", "nBorder", "eBorder", "wBorder" },
+		[normals.Right] = { "seColumn", "eBorder", "eTerrace" },
+		[normals.Left] = { "swColumn", "wBorder", "wTerrace" },
+		[normals.Back] = { "seColumn", "swColumn", "sBorder", "sTerrace" },
 	}) do
 		local surfaceSpecificLines = {}
 		for i, bondKey in pairs(surfaceLineKeys) do

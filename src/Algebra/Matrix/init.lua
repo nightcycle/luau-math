@@ -1,11 +1,25 @@
 --!strict
-
--- imagine a cframe that works with unlimited dimensions
+--- @class Matrix
+--- A N-Dimensional matrix class meant to work with the N-Dimensional Vector class
 local Matrix: {[any]: any} = {}
 
 local Vector = require(script.Parent.Vector)
 type Vector = Vector.Vector
 
+
+--- @prop Dimensions Vector 
+--- @within Matrix
+--- A 2 dimensional vector describing the length of the vectors in Y and the number of vectors in X. 
+
+--- @prop Type string 
+--- @within Matrix
+--- An identifier for the class
+
+--- @prop Magnitude number 
+--- @within Matrix
+--- The sum of all the vector magnitudes.
+
+--- constructs a new matrix from vector parameters
 function Matrix.new(...: Vector)
 	local self: {[any]: any} = {}
 
@@ -29,17 +43,20 @@ function Matrix.new(...: Vector)
 end
 export type Matrix = typeof(Matrix.new(Vector.new(0, 0), Vector.new(0, 0)))
 
-function Matrix:__index(k): any?
+--- Allows for the access of public variables, as well as the indexing of specific vectors within the matrix.
+function Matrix:__index(k: any): any?
 	if k == "_vectors" then
 		error("Don't try to index private variables")
 	end
 	return rawget(self, k) or rawget(self, "_vectors")[k] or rawget(Matrix, k)
 end
 
+--- Similar to vectors you aren't allowed ot change properties after construction, create a new matrix instead.
 function Matrix:__newindex(k, v): nil
 	error("You can't change values of this vector post-construction")
 end
 
+--- returns a list of vectors used to construct the matrix
 function Matrix:ToVectors(): { [number]: Vector }
 	local vecs = {}
 	for i, vec in ipairs(rawget(self, "_vectors")) do
@@ -48,6 +65,7 @@ function Matrix:ToVectors(): { [number]: Vector }
 	return vecs
 end
 
+--- Performs an addition operation on the matrix and another matrix or vector.
 function Matrix:__add(vMatVec: Matrix | Vector): Matrix --add
 	local sumVectors: { [number]: Vector } = {}
 	for i, mVec: Vector in ipairs(rawget(self, "_vectors")) do
@@ -72,6 +90,7 @@ function Matrix:__add(vMatVec: Matrix | Vector): Matrix --add
 	return Matrix.new(unpack(sumVectors))
 end
 
+--- Performs a subtraction operation on the matrix and another matrix or vector.
 function Matrix:__sub(vMatVec: Matrix | Vector): Matrix --add
 	local difVectors: { [number]: Vector } = {}
 	for i, mVec: Vector in ipairs(rawget(self, "_vectors")) do
@@ -93,6 +112,7 @@ function Matrix:__sub(vMatVec: Matrix | Vector): Matrix --add
 	return Matrix.new(unpack(difVectors))
 end
 
+--- Performs a multiplication operation on the matrix and another matrix, vector, or number.
 function Matrix:__mul(vMatVecNum: Matrix | Vector | number): Matrix --multiply
 	local result: Matrix
 	if typeof(vMatVecNum) == "table" then
@@ -146,7 +166,8 @@ function Matrix:__mul(vMatVecNum: Matrix | Vector | number): Matrix --multiply
 	return result
 end
 
-function Matrix:__div(v): Matrix --divide
+--- Performs a division operation on the matrix and another matrix or number.
+function Matrix:__div(v: Matrix | number): Matrix --divide
 	if typeof(v) == "table" and v.Type == "Matrix" then
 		error("I didn't code matrix division")
 	elseif typeof(v) == "number" then
@@ -160,7 +181,8 @@ function Matrix:__div(v): Matrix --divide
 	end
 end
 
-function Matrix:__pow(v): Matrix --power
+--- Performs an exponential operation on the matrix and another matrix or number.
+function Matrix:__pow(v: Matrix | number): Matrix --power
 	if typeof(v) == "table" then
 		local result = {}
 		for i, s in ipairs(rawget(self, "_vectors")) do
@@ -178,7 +200,8 @@ function Matrix:__pow(v): Matrix --power
 	end
 end
 
-function Matrix:__mod(v): Matrix --mod
+--- Performs an modulus operation on the matrix and another matrix or number.
+function Matrix:__mod(v: Matrix | number): Matrix --mod
 	if typeof(v) == "table" then
 		local result = {}
 		for i, s in ipairs(rawget(self, "_vectors")) do
@@ -196,7 +219,8 @@ function Matrix:__mod(v): Matrix --mod
 	end
 end
 
-function Matrix:__eq(v): boolean --equal
+--- Determines if another value is a matrix with the same vectors configuration
+function Matrix:__eq(v: any): boolean --equal
 	if v == false then
 		return false
 	end
@@ -212,6 +236,7 @@ function Matrix:__eq(v): boolean --equal
 	end
 end
 
+--- Vectors are written as columns within traditional matrix layout. This returns vectors constructed from the rows.
 function Matrix:ToRows(): { [number]: Vector }
 	local rows: { [number]: { [number]: number } } = {}
 	for i, vec in ipairs(rawget(self, "_vectors")) do
@@ -228,11 +253,13 @@ function Matrix:ToRows(): { [number]: Vector }
 	return vecs
 end
 
+--- Rotates the matrix counter clockwise 90 degrees.
 function Matrix:Transpose(): Matrix
 	local vectors = self:ToRows()
 	return Matrix.new(unpack(vectors))
 end
 
+--- Converts matrix to string.
 function Matrix:__tostring(): string
 	local str = ""
 	local rows = self:ToRows()
@@ -253,7 +280,8 @@ function Matrix:__tostring(): string
 	return str
 end
 
-function Matrix.one(dimensions): Vector
+--- Creates a matrix with all vector values set to 1
+function Matrix.one(dimensions: Vector): Vector
 	local vecs = {}
 	for i = 1, dimensions[1] do
 		table.insert(vecs, Vector.one(dimensions[2]))
@@ -261,7 +289,8 @@ function Matrix.one(dimensions): Vector
 	return Vector.new(unpack(vecs))
 end
 
-function Matrix.identity(dimensions): Vector
+--- Creates a matrix with any cell along the diagonal of the matrix set to 1.
+function Matrix.identity(dimensions: Vector): Vector
 	local vecs = {}
 	for i = 1, dimensions[1] do
 		table.insert(vecs, Vector.identity(dimensions[2], i))

@@ -6,7 +6,15 @@ type Normal = types.Normal
 type Axis = types.Axis
 type Line = types.Line
 type Surface = types.Surface
-type Face = types.Face
+
+local normals: {[string]: Enum.NormalId} = {
+	Top = Enum.NormalId.Top,
+	Bottom = Enum.NormalId.Bottom,
+	Back = Enum.NormalId.Back,
+	Front = Enum.NormalId.Front,
+	Right = Enum.NormalId.Right,
+	Left = Enum.NormalId.Left,
+}
 
 function getSurfaceCFrame(part: Part, lnormal: Normal): CFrame
 	local UP = Vector3.new(0, 1, 0)
@@ -120,7 +128,7 @@ function module.getLines(block: BasePart): { [string]: Line }
 	return lines
 end
 
-function module.getSurfaces(block: Part): { [Face]: Surface }
+function module.getSurfaces(block: Part): { [Enum.NormalId]: Surface }
 	local lines = module.getLines(block)
 
 	local vector = {
@@ -131,21 +139,21 @@ function module.getSurfaces(block: Part): { [Face]: Surface }
 		Front = getSurfaceCFrame(block, Vector3.new(0, 0, 1)).LookVector,
 		Back = getSurfaceCFrame(block, Vector3.new(0, 0, -1)).LookVector,
 	}
-	local surfaces: { [Face]: Surface } = {}
-	for k: Face, surfaceLineKeys in pairs({
-		Top = { "sTerrace", "nTerrace", "eTerrace", "wTerrace" },
-		Bottom = { "sBorder", "nBorder", "eBorder", "wBorder" },
-		Right = { "seColumn", "neColumn", "eBorder", "eTerrace" },
-		Left = { "swColumn", "nwColumn", "wBorder", "wTerrace" },
-		Front = { "neColumn", "nwColumn", "nBorder", "nTerrace" },
-		Back = { "seColumn", "swColumn", "sBorder", "sTerrace" },
+	local surfaces: { [Enum.NormalId]: Surface } = {}
+	for normalId: Enum.NormalId, surfaceLineKeys in pairs({
+		[normals.Top] = { "sTerrace", "nTerrace", "eTerrace", "wTerrace" },
+		[normals.Bottom] = { "sBorder", "nBorder", "eBorder", "wBorder" },
+		[normals.Right] = { "seColumn", "neColumn", "eBorder", "eTerrace" },
+		[normals.Left] = { "swColumn", "nwColumn", "wBorder", "wTerrace" },
+		[normals.Front] = { "neColumn", "nwColumn", "nBorder", "nTerrace" },
+		[normals.Back] = { "seColumn", "swColumn", "sBorder", "sTerrace" },
 	}) do
 		local surfaceSpecificLines = {}
 		for i, bondKey in pairs(surfaceLineKeys) do
 			table.insert(surfaceSpecificLines, lines[bondKey])
 		end
-		surfaces[k] = {
-			Normal = vector[k],
+		surfaces[normalId] = {
+			Normal = vector[normalId],
 			Lines = surfaceSpecificLines,
 		} :: Surface
 	end

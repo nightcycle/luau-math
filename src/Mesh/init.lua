@@ -1,6 +1,4 @@
 --!strict
-local Mesh = {}
-
 local types = require(script.Parent.Types)
 type Point = types.Point
 type Vertex = types.Vertex
@@ -8,12 +6,23 @@ type Normal = types.Normal
 type Axis = types.Axis
 type Line = types.Line
 type Surface = types.Surface
-type Face = types.Face
 
 local PartSolver = require(script:WaitForChild("Part"))
 local WedgePartSolver = require(script:WaitForChild("WedgePart"))
 local TetraPartSolver = require(script:WaitForChild("TetraPart"))
 local CornerWedgePartSolver = require(script:WaitForChild("CornerWedgePart"))
+
+--- @class Mesh
+--- A basic utility for translating meshes into geometry useful elements. Does not currently support CSG or most user-imported meshes.
+
+local Mesh = {}
+Mesh.__index = Mesh
+
+--- @prop TetraPartAssetId number
+--- @within Mesh
+--- this is the id for the free model tetrahedron meshpart I use
+
+Mesh.TetraPartAssetId = 552212360
 
 function getSolver(basePart: BasePart): (BasePart) -> any | nil
 	local result: any
@@ -21,7 +30,7 @@ function getSolver(basePart: BasePart): (BasePart) -> any | nil
 		result = CornerWedgePartSolver
 	elseif basePart:IsA("WedgePart") then
 		result = WedgePartSolver
-	elseif basePart:IsA("MeshPart") and basePart.MeshId == "rbxassetid://552212360" then
+	elseif basePart:IsA("MeshPart") and basePart.MeshId == "rbxassetid://"..tostring(Mesh.TetraPartAssetId) then
 		result = TetraPartSolver
 	elseif basePart:IsA("BasePart") then
 		result = PartSolver
@@ -29,21 +38,25 @@ function getSolver(basePart: BasePart): (BasePart) -> any | nil
 	return result
 end
 
+--- provides a list of vertex positions in 3d space
 function Mesh.getVertices(basePart: BasePart): { [number]: Vertex }
 	local solver: any = getSolver(basePart)
 	return solver.getVertices(basePart)
 end
 
+--- provides a dictionary of line vertex pairs
 function Mesh.getLines(basePart: BasePart): { [string]: Line }
 	local solver: any = getSolver(basePart)
 	return solver.getLines(basePart)
 end
 
-function Mesh.getSurfaces(basePart: BasePart): { [Face]: Surface }
+--- provides a dictionary of surface geometry data
+function Mesh.getSurfaces(basePart: BasePart): {[Enum.NormalId]: Surface}
 	local solver: any = getSolver(basePart)
 	return solver.getSurfaces(basePart)
 end
 
+--- Performs a greedy mesh style simplification on a 3d table of boolean values
 function Mesh.solveGreedyMesh(grid: { [Vector3]: boolean })
 	-- print("Grid", grid)
 	local registry = {}
@@ -132,6 +145,7 @@ function Mesh.solveGreedyMesh(grid: { [Vector3]: boolean })
 	return regions
 end
 
+--- Generates a smallish bounding box at cframe that contains all the parts without the need for a model. 
 function Mesh.getBoundingBoxAtCFrame(orientation: CFrame, parts: { [number]: BasePart })
 	-- print("A")
 	if #parts == 0 then
@@ -171,80 +185,6 @@ function Mesh.getBoundingBoxAtCFrame(orientation: CFrame, parts: { [number]: Bas
 		* CFrame.fromMatrix(minV3:Lerp(maxV3, 0.5), orientation.XVector, orientation.YVector, orientation.ZVector)
 	local size = maxV3 - minV3
 	return size, centerCF
-end
-
-function Mesh.getBoundingBox(parts: { [number]: BasePart }, worldCF: CFrame | nil)
-	worldCF = worldCF or CFrame.new(0, 0, 0)
-	assert(worldCF ~= nil)
-	local minX
-	local minY
-	local minZ
-	local maxX
-	local maxY
-	local maxZ
-	for i, part in ipairs(parts) do
-		if part:IsA("BasePart") then
-			local offsetCF = worldCF:Inverse() * part.CFrame
-			local maxCorner = offsetCF * CFrame.new(part.Size * 0.5).p
-			local minCorner = offsetCF * CFrame.new(-part.Size * 0.5).p
-			local x1 = minCorner.X
-			-- sort(minX, maxX, x1)
-			if not minX or minX > x1 then
-				minX = x1
-			end
-			if not maxX or maxX < x1 then
-				maxX = x1
-			end
-			local x2 = maxCorner.X
-			if not minX or minX > x2 then
-				minX = x2
-			end
-			if not maxX or maxX < x2 then
-				maxX = x2
-			end
-			-- sort(minX, maxX, x2)
-			local y1 = minCorner.Y
-			if not minY or minY > y1 then
-				minY = y1
-			end
-			if not maxY or maxY < y1 then
-				maxY = y1
-			end
-			-- sort(minY, maxY, y1)
-			local y2 = maxCorner.Y
-			if not minY or minY > y2 then
-				minY = y2
-			end
-			if not maxY or maxY < y2 then
-				maxY = y2
-			end
-			-- sort(minY, maxY, y2)
-			local z1 = minCorner.Z
-			if not minZ or minZ > z1 then
-				minZ = z1
-			end
-			if not maxZ or maxZ < z1 then
-				maxZ = z1
-			end
-			-- sort(minZ, maxZ, z1)
-			local z2 = maxCorner.Z
-			if not minZ or minZ > z2 then
-				minZ = z2
-			end
-			if not maxZ or maxZ < z2 then
-				maxZ = z2
-			end
-			-- sort(minZ, maxZ, z2)
-			-- print("X", x1, x2, "Y", y1,y2, "Z", z1,z2)
-		end
-	end
-	local minV3 = Vector3.new(minX, minY, minZ)
-	local maxV3 = Vector3.new(maxX, maxY, maxZ)
-	-- print("Min", minV3, "Max", maxV3)
-	local size = maxV3 - minV3
-	local center = minV3 + size * 0.5
-	local cf = CFrame.fromMatrix((worldCF * CFrame.new(center)).p, worldCF.XVector, worldCF.YVector, worldCF.ZVector)
-	return cf, size
 end
 
 return Mesh

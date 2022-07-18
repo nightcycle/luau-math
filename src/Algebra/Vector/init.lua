@@ -1,6 +1,9 @@
 --!strict
+--- @class Vector
+--- A N-Dimensional vector class with similar API formatting to Roblox's native Vector2 and Vector3 datatypes.
 local Vector: {[any]: any} = {}
---imagine a vector2 or 3, except unlimited dimensions
+
+--- When not indexing the properties or functions, you can also index specific dimensional values by their dimension number. For example indexing the Y value of a 3 dimensional vector would be vector[2].
 function Vector:__index(k: any): any?
 	if k == "_scalars" then
 		error("Don't try to index private variables")
@@ -20,10 +23,14 @@ function Vector:__index(k: any): any?
 	end
 end
 
+
+--- Disallows the user to edit values after construction, similar to Roblox Vector2s and Vector3s. Just construct a new one if you need to change something.
 function Vector:__newindex(k: any, v: number): nil
 	error("You can't change values of this vector post-construction")
 end
 
+
+--- Performs an addition operation on vector
 function Vector:__add(v: Vector): Vector --add
 	local sum = {}
 	for i, s in ipairs(rawget(self, "_scalars")) do
@@ -36,7 +43,9 @@ function Vector:__add(v: Vector): Vector --add
 	return Vector.new(unpack(sum))
 end
 
-function Vector:__sub(v): Vector --subtract
+
+--- Performs a subtraction operation on vector
+function Vector:__sub(v: Vector): Vector --subtract
 	local difference = {}
 	for i, s in ipairs(rawget(self, "_scalars")) do
 		if type(v) == "table" and v.Type == "Vector" then
@@ -48,7 +57,8 @@ function Vector:__sub(v): Vector --subtract
 	return Vector.new(unpack(difference))
 end
 
-function Vector:__mul(v): Vector --multiply
+--- Performs a multiplication operation on vector
+function Vector:__mul(v: Vector): Vector --multiply
 	if typeof(v) == "table" then
 		local product = {}
 		for i, s in ipairs(rawget(self, "_scalars")) do
@@ -66,7 +76,9 @@ function Vector:__mul(v): Vector --multiply
 	end
 end
 
-function Vector:__div(v): Vector --divide
+
+--- Performs a division operation on vector
+function Vector:__div(v: Vector): Vector --divide
 	if typeof(v) == "table" then
 		local quotient = {}
 		for i, s in ipairs(rawget(self, "_scalars")) do
@@ -84,7 +96,9 @@ function Vector:__div(v): Vector --divide
 	end
 end
 
-function Vector:__pow(v): Vector --power
+
+--- Performs an exponent operation on vector
+function Vector:__pow(v: Vector): Vector --power
 	if typeof(v) == "table" then
 		local result = {}
 		for i, s in ipairs(rawget(self, "_scalars")) do
@@ -102,7 +116,9 @@ function Vector:__pow(v): Vector --power
 	end
 end
 
-function Vector:__mod(v): Vector --mod
+
+--- Performs a modulus operation on vector
+function Vector:__mod(v: Vector): Vector --mod
 	if typeof(v) == "table" then
 		local result = {}
 		for i, s in ipairs(rawget(self, "_scalars")) do
@@ -120,7 +136,9 @@ function Vector:__mod(v): Vector --mod
 	end
 end
 
-function Vector:__eq(v): boolean --equal
+
+--- Determins if two vectors are equal
+function Vector:__eq(v: Vector): boolean --equal
 	if v == false then
 		return false
 	end
@@ -136,6 +154,8 @@ function Vector:__eq(v): boolean --equal
 	end
 end
 
+
+--- Converts vector to a readable string. Technically this should be written vertically but that can be difficult to read in the output and as instance names.
 function Vector:__tostring(): string
 	local scalars = self:ToScalars()
 	local str = "["
@@ -152,6 +172,8 @@ function Vector:__tostring(): string
 	return str .. "]"
 end
 
+
+--- Returns the values at each dimension in a list
 function Vector:ToScalars(): { [number]: number }
 	local result = {}
 	for i, v in ipairs(rawget(self, "_scalars")) do
@@ -161,6 +183,8 @@ function Vector:ToScalars(): { [number]: number }
 	return result
 end
 
+
+--- Returns a vector rounded to closest integer at each dimension.
 function Vector:Round(pow: number?): Vector
 	assert(typeof(pow) == "number" or pow == nil)
 	pow = pow or 0
@@ -173,7 +197,9 @@ function Vector:Round(pow: number?): Vector
 	return Vector.new(unpack(newScalars))
 end
 
-function Vector:Floor(pow: number | nil): Vector
+
+--- Returns a vector rounded to lower integer at each dimension.
+function Vector:Floor(pow: number?): Vector
 	assert(typeof(pow) == "number" or pow == nil)
 	pow = pow or 0
 	local newScalars = {}
@@ -184,7 +210,9 @@ function Vector:Floor(pow: number | nil): Vector
 	return Vector.new(unpack(newScalars))
 end
 
-function Vector:Ceil(pow: number | nil): Vector
+
+--- Returns a Vector rounded to higher integer at each dimension.
+function Vector:Ceil(pow: number?): Vector
 	assert(typeof(pow) == "number" or pow == nil)
 	pow = pow or 0
 	local newScalars = {}
@@ -195,6 +223,8 @@ function Vector:Ceil(pow: number | nil): Vector
 	return Vector.new(unpack(newScalars))
 end
 
+
+--- Returns the cross product.
 function Vector:Cross(other: Vector): Vector
 	assert(type(other) == "table")
 	assert(other.Size == self.Size, "Size mismatch")
@@ -252,7 +282,9 @@ function Vector:Cross(other: Vector): Vector
 	end
 end
 
-function Vector:Dot(other: Vector): Vector
+
+--- Returns the dot product.
+function Vector:DotProduct(other: Vector): Vector
 	assert(type(other) == "table")
 	assert(other.Size == self.Size, "Size mismatch")
 
@@ -264,8 +296,10 @@ function Vector:Dot(other: Vector): Vector
 	return Vector.new(unpack(result))
 end
 
-function Vector:ScalarDot(other: Vector): number
-	local product = self:Dot(other)
+
+--- Returns the dot product as single number.
+function Vector:Dot(other: Vector): number
+	local product = self:DotProduct(other)
 	local sum = 0
 	for i, v in ipairs(product:ToScalars()) do
 		sum += v
@@ -273,7 +307,9 @@ function Vector:ScalarDot(other: Vector): number
 	return sum
 end
 
-function Vector:Lerp(goal, alpha: number): Vector
+
+--- Constructs a vector interpolated between second vector by alpha.
+function Vector:Lerp(goal: Vector, alpha: number): Vector
 	local product = {}
 	for i, s in ipairs(rawget(self, "_scalars")) do
 		product[i] = s + (goal[i] - s) * alpha
@@ -281,36 +317,44 @@ function Vector:Lerp(goal, alpha: number): Vector
 	return Vector.new(unpack(product))
 end
 
+
+--- Takes the first two dimensions of vector and constructs a Roblox Vector3. Will use 0 for relevant dimensions if vector has a size below 3.
 function Vector:ToVector3(): Vector3
 	local scalars = self:ToScalars()
-	return Vector3.new(scalars[1], scalars[2], scalars[3])
+	return Vector3.new(scalars[1] or 0, scalars[2] or 0, scalars[3] or 0)
 end
 
+
+--- Takes the first two dimensions of vector and constructs a Roblox Vector2. Will use 0 for relevant dimensions if Vector has a size below 2.
 function Vector:ToVector2(): Vector2
 	local scalars = self:ToScalars()
-	return Vector2.new(scalars[1], scalars[2])
+	return Vector2.new(scalars[1] or 0, scalars[2] or 0)
 end
 
-function Vector:Clone(): Vector
-	return Vector.new(unpack(rawget(self, "_scalars")))
-end
 
+--- Constructs vector with specified size and a magnitude of 0
 function Vector.zero(size: number): Vector
 	local params = {}
 	for i = 1, size do
-		table.insert(params, i)
+		table.insert(params, 0)
 	end
 	return Vector.new(unpack(params))
 end
 
+
+--- Constructs vector from Vector3
 function Vector.fromVector3(v3: Vector3): Vector
 	return Vector.new(v3.X, v3.Y, v3.Z)
 end
 
+
+--- Constructs vector from Vector2
 function Vector.fromVector2(v2: Vector2): Vector
 	return Vector.new(v2.X, v2.Y)
 end
 
+
+--- Provides a vector of specified size with a 1 in each dimension
 function Vector.one(size: number): Vector
 	local vals = {}
 	for i = 1, size do
@@ -319,6 +363,8 @@ function Vector.one(size: number): Vector
 	return Vector.new(unpack(vals))
 end
 
+
+--- Returns a vector of specified size with a 1 at the specified index.
 function Vector.identity(size: number, index: number): Vector
 	local vals = {}
 	for i = 1, size do
@@ -331,6 +377,19 @@ function Vector.identity(size: number, index: number): Vector
 	return Vector.new(unpack(vals))
 end
 
+--- @prop Size number 
+--- @within Vector
+--- The dimension of the vector, for example a Vector3 would have a size of 3.
+
+--- @prop Type string 
+--- @within Vector
+--- An identifier for the class
+
+--- @prop Magnitude number 
+--- @within Vector
+--- The length of a line across all dimensions, similar to how the magnitude of a Vector2 is the length of the hypotenuse of a right triangle given the side lengths of X and Y.
+
+--- constructs a new vector from number parameters
 function Vector.new(...: number)
 	local self: {[any]: any} = {}
 
@@ -351,5 +410,6 @@ function Vector.new(...: number)
 end
 
 export type Vector = typeof(Vector.new(0, 0))
+
 
 return Vector

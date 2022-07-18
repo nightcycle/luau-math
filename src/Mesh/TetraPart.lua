@@ -6,7 +6,16 @@ type Normal = types.Normal
 type Axis = types.Axis
 type Line = types.Line
 type Surface = types.Surface
-type Face = types.Face
+
+local normals: {[string]: Enum.NormalId} = {
+	Top = Enum.NormalId.Top,
+	Bottom = Enum.NormalId.Bottom,
+	Back = Enum.NormalId.Back,
+	Front = Enum.NormalId.Front,
+	Right = Enum.NormalId.Right,
+	Left = Enum.NormalId.Left,
+}
+
 
 function getSurfaceCFrame(part: BasePart, lnormal: Normal): CFrame
 	local UP = Vector3.new(0, 1, 0)
@@ -83,7 +92,7 @@ function module.getLines(cornerWedge: BasePart): { [string]: Line }
 	}
 end
 
-function module.getSurfaces(meshPart: BasePart): { [Face]: Surface }
+function module.getSurfaces(meshPart: BasePart): {[Enum.NormalId]: Surface }
 	local lines = module.getLines(meshPart)
 	local opposite = meshPart.Size.Y
 
@@ -98,13 +107,13 @@ function module.getSurfaces(meshPart: BasePart): { [Face]: Surface }
 		Back = getSurfaceCFrame(meshPart, Vector3.new(0, 0, -1)).LookVector,
 	}
 
-	local surfaces: { [Face]: Surface } = {}
+	local surfaces: {[Enum.NormalId]: Surface } = {}
 	for k, surfaceLineKeys in pairs({
-		Top = { "eBorder", "eTerrace", "wTerrace" }, --front
-		Bottom = { "sBorder", "eBorder", "wBorder" }, --bottom
+		[normals.Top] = { "eBorder", "eTerrace", "wTerrace" }, --front
+		[normals.Bottom] = { "sBorder", "eBorder", "wBorder" }, --bottom
 		-- east = {"seColumn", "eBorder", "eTerrace"},
-		Left = { "swColumn", "wBorder", "wTerrace" },
-		Back = { "seColumn", "swColumn", "sBorder" },
+		[normals.Left] = { "swColumn", "wBorder", "wTerrace" },
+		[normals.Back] = { "seColumn", "swColumn", "sBorder" },
 	}) do
 		local surfaceSpecificLines = {}
 		for i, bondKey in pairs(surfaceLineKeys) do

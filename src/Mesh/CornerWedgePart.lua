@@ -6,8 +6,16 @@ type Normal = types.Normal
 type Axis = types.Axis
 type Line = types.Line
 type Surface = types.Surface
-type Face = types.Face
 type Radian = types.Radian
+
+local normals: {[string]: Enum.NormalId} = {
+	Top = Enum.NormalId.Top,
+	Bottom = Enum.NormalId.Bottom,
+	Back = Enum.NormalId.Back,
+	Front = Enum.NormalId.Front,
+	Right = Enum.NormalId.Right,
+	Left = Enum.NormalId.Left,
+}
 
 function getSurfaceCFrame(part: CornerWedgePart, lnormal: Normal): CFrame
 	local UP = Vector3.new(0, 1, 0)
@@ -91,7 +99,7 @@ function module.getLines(cornerWedge: CornerWedgePart): { [string]: Line }
 	}
 end
 
-function module.getSurfaces(cornerWedge: CornerWedgePart): { [Face]: Surface }
+function module.getSurfaces(cornerWedge: CornerWedgePart): { [Enum.NormalId]: Surface }
 	local lines = module.getLines(cornerWedge)
 	local opposite = cornerWedge.Size.Y
 
@@ -99,26 +107,26 @@ function module.getSurfaces(cornerWedge: CornerWedgePart): { [Face]: Surface }
 	local angle2: Radian = math.atan2(opposite, cornerWedge.Size.X)
 
 	local vector = {
-		Top = getSurfaceCFrame(cornerWedge, Vector3.new(0, 0, 1):Lerp(Vector3.new(0, 1, 0), math.cos(angle))).LookVector,
-		Bottom = getSurfaceCFrame(cornerWedge, Vector3.new(0, -1, 0)).LookVector,
-		Left = getSurfaceCFrame(cornerWedge, Vector3.new(1, 0, 0)).LookVector,
-		Right = getSurfaceCFrame(cornerWedge, Vector3.new(-1, 0, 0):Lerp(Vector3.new(0, 1, 0), math.cos(angle2))).LookVector,
-		Back = getSurfaceCFrame(cornerWedge, Vector3.new(0, 0, -1)).LookVector,
+		[Enum.NormalId.Top] = getSurfaceCFrame(cornerWedge, Vector3.new(0, 0, 1):Lerp(Vector3.new(0, 1, 0), math.cos(angle))).LookVector,
+		[Enum.NormalId.Bottom] = getSurfaceCFrame(cornerWedge, Vector3.new(0, -1, 0)).LookVector,
+		[Enum.NormalId.Left] = getSurfaceCFrame(cornerWedge, Vector3.new(1, 0, 0)).LookVector,
+		[Enum.NormalId.Right] = getSurfaceCFrame(cornerWedge, Vector3.new(-1, 0, 0):Lerp(Vector3.new(0, 1, 0), math.cos(angle2))).LookVector,
+		[Enum.NormalId.Back] = getSurfaceCFrame(cornerWedge, Vector3.new(0, 0, -1)).LookVector,
 	}
-	local surfaces: { [Face]: Surface } = {}
-	for k, surfaceLineKeys in pairs({
-		Front = { "nBorder", "eTerrace", "wTerrace" },
-		Bottom = { "sBorder", "nBorder", "eBorder", "wBorder" },
-		Right = { "seColumn", "eBorder", "eTerrace" },
-		Left = { "swColumn", "wBorder", "wTerrace" },
-		Back = { "seColumn", "swColumn", "sBorder" },
+	local surfaces: {[Enum.NormalId]: Surface } = {}
+	for normalId, surfaceLineKeys in pairs({
+		[normals.Front] = { "nBorder", "eTerrace", "wTerrace" },
+		[normals.Bottom] = { "sBorder", "nBorder", "eBorder", "wBorder"},
+		[normals.Right] = { "seColumn", "eBorder", "eTerrace" },
+		[normals.Left] = { "swColumn", "wBorder", "wTerrace" },
+		[normals.Back] = { "seColumn", "swColumn", "sBorder" },
 	}) do
 		local surfaceSpecificLines = {}
 		for i, bondKey in pairs(surfaceLineKeys) do
 			table.insert(surfaceSpecificLines, lines[bondKey])
 		end
-		surfaces[k] = {
-			Normal = vector[k],
+		surfaces[normalId] = {
+			Normal = vector[normalId],
 			Lines = surfaceSpecificLines,
 		} :: Surface
 	end

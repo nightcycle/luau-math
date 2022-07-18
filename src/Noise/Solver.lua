@@ -1,14 +1,21 @@
 --!strict
+--- @class NoiseSolver
+--- A N-Dimensional matrix class meant to work with the N-Dimensional Vector class
+local NoiseSolver: {[any]: any} = {}
+NoiseSolver.__index = NoiseSolver
+
+local Types = require(script.Parent.Parent.Types)
 local Vector = require(script.Parent.Parent.Algebra.Vector)
 type Vector = Vector.Vector
-
-local Solver: {[any]: any} = {}
-Solver.__index = Solver
 
 local Matrix = require(script.Parent.Parent.Algebra.Matrix)
 type Matrix = Matrix.Matrix
 
-function Solver.translateVector(vec: Vector | Vector2 | Vector3): Vector
+
+type Alpha = Types.Alpha
+
+--- An easy way to convert an unknown type into a vector
+function NoiseSolver.translateVector(vec: Vector | Vector2 | Vector3): Vector
 	assert(vec ~= nil)
 	if typeof(vec) == "Vector2" then
 		return Vector.new(vec.X, vec.Y)
@@ -20,7 +27,7 @@ function Solver.translateVector(vec: Vector | Vector2 | Vector3): Vector
 	return vec
 end
 
-function Solver:__newindex(k, v): nil
+function NoiseSolver:__newindex(k, v): nil
 	if self[k] ~= nil then
 		rawset(self, k, v)
 	else
@@ -29,7 +36,8 @@ function Solver:__newindex(k, v): nil
 	return nil
 end
 
-function Solver:_Rand(vec: Vector): number
+--- Returns a random number between 0 and 1 that should change dramatically and pseudo-randomly with small nudges. A 2d map using this would look like static.
+function NoiseSolver:_Rand(vec: Vector): Alpha
 	local scalars = vec:ToScalars()
 	local seed: number = self.Seed
 	for i, v in ipairs(scalars) do
@@ -38,7 +46,7 @@ function Solver:_Rand(vec: Vector): number
 	return Random.new(seed):NextNumber()
 end
 
-function Solver:_SetSeparationLimit(): nil
+function NoiseSolver:_SetSeparationLimit(): nil
 	local points: { [number]: Vector } = self.Points
 	if #points <= 1 then
 		rawset(self, "SeparationLimit", 0)
@@ -73,7 +81,7 @@ function Solver:_SetSeparationLimit(): nil
 	return nil
 end
 
-function Solver:_CopyConfiguration(solver: NoiseSolver): nil
+function NoiseSolver:_CopyConfiguration(solver: NoiseSolver): nil
 	for k, v in pairs(self) do
 		if typeof(v) == "number" or typeof(v) == "EnumItem" then
 			solver[k] = v
@@ -94,7 +102,8 @@ function Solver:_CopyConfiguration(solver: NoiseSolver): nil
 	return nil
 end
 
-function Solver:ToMatrix(size: number): Matrix
+--- Returns a matrix relevant size with each cell filled with the solved value.
+function NoiseSolver:ToMatrix(size: number): Matrix
 	local vecs = {}
 	local totalDuration = 0
 	local totalSolves = 0
@@ -112,7 +121,8 @@ function Solver:ToMatrix(size: number): Matrix
 	return Matrix.new(unpack(vecs))
 end
 
-function Solver:Debug(parentGui: Frame, scale: number?, rMatrix: Matrix, gMatrix: Matrix, bMatrix: Matrix): nil
+--- Allows you to quickly render a 2d noise map with control over the red, green, and blue channels.
+function NoiseSolver:Debug(parentGui: Frame, scale: number?, rMatrix: Matrix, gMatrix: Matrix, bMatrix: Matrix): nil
 	
 	scale = scale or 1
 	assert(scale ~= nil)
@@ -139,7 +149,7 @@ function Solver:Debug(parentGui: Frame, scale: number?, rMatrix: Matrix, gMatrix
 	return nil
 end
 
-function Solver:_Compile(vec: Vector, base: number): number
+function NoiseSolver:_Compile(vec: Vector, base: number): number
 	local val = 0
 	for i, solver in pairs(self.Octaves) do
 		val += solver:Get(vec)
@@ -147,7 +157,7 @@ function Solver:_Compile(vec: Vector, base: number): number
 	return self.Amplitude * (base + val)
 end
 
-function Solver:_UpdateOctaves(): nil
+function NoiseSolver:_UpdateOctaves(): nil
 	for power, solver in ipairs(self.Octaves) do
 		local frequency: number = self.Frequency
 		local lacunarity: number = self.Lacunarity
@@ -161,15 +171,16 @@ function Solver:_UpdateOctaves(): nil
 	return nil
 end
 
-function Solver:_TranslatePoints(pointVectors: { [number]: Vector | Vector2 | Vector3 }): {[number]: Vector}
+function NoiseSolver:_TranslatePoints(pointVectors: { [number]: Vector | Vector2 | Vector3 }): {[number]: Vector}
 	local finalPoints: {[number]: Vector} = {}
 	for i, vec in ipairs(pointVectors) do
-		table.insert(finalPoints, Solver.translateVector(vec))
+		table.insert(finalPoints, NoiseSolver.translateVector(vec))
 	end
 	return finalPoints
 end
 
-function Solver:GeneratePoints(count: number, min: Vector, max: Vector): nil
+--- Creates points randomly
+function NoiseSolver:GeneratePoints(count: number, min: Vector, max: Vector): nil
 	assert(count > 0, "Bad count")
 	assert(getmetatable(min) == Vector)
 	assert(getmetatable(max) == Vector)
@@ -189,67 +200,77 @@ function Solver:GeneratePoints(count: number, min: Vector, max: Vector): nil
 	return nil
 end
 
-function Solver:SetPoints(pointVectors: { [number]: Vector | Vector2 | Vector3 }): nil
+--- Manually sets points
+function NoiseSolver:SetPoints(pointVectors: { [number]: Vector | Vector2 | Vector3 }): nil
 	assert(pointVectors ~= nil, "Bad point vectors")
 	rawset(self, "Points", self:_TranslatePoints(pointVectors))
 	self:_SetSeparationLimit()
 	return nil
 end
 
-function Solver:InsertOctave(solver: NoiseSolver): nil
+--- Inserts an octave a layer below the lowest current octave
+function NoiseSolver:InsertOctave(solver: NoiseSolver): nil
 	assert(solver ~= nil, "Bad octave solver")
 	table.insert(self.Octaves, solver)
 	self:_UpdateOctaves()
 	return nil
 end
 
-function Solver:SetPersistence(value: number): nil
+--- Sets the persistence
+function NoiseSolver:SetPersistence(value: number): nil
 	assert(value ~= nil and type(value) == "number", "Bad persistence")
 	rawset(self, "Persistence", value or self.Persistence)
 	self:_UpdateOctaves()
 	return nil
 end
 
-function Solver:SetLacunarity(value: number): nil
+--- Sets the lacunarity
+function NoiseSolver:SetLacunarity(value: number): nil
 	assert(value ~= nil and type(value) == "number", "Bad lacunarity")
 	rawset(self, "Lacunarity", value or self.Lacunarity)
 	self:_UpdateOctaves()
 	return nil
 end
 
-function Solver:SetAmplitude(value: number): nil
+--- Sets the amplitude
+function NoiseSolver:SetAmplitude(value: number): nil
 	assert(value ~= nil and type(value) == "number", "Bad amplitude")
 	rawset(self, "Amplitude", value or self.Amplitude)
 	self:_UpdateOctaves()
 	return nil
 end
 
-function Solver:SetFrequency(value: number): nil
+--- Sets the frequency.
+function NoiseSolver:SetFrequency(value: number): nil
 	assert(value ~= nil and type(value) == "number", "Bad frequency")
 	rawset(self, "Frequency", value)
 	self:_UpdateOctaves()
 	return nil
 end
 
-function Solver:SetSeed(seed: number): nil
+--- Sets the seed.
+function NoiseSolver:SetSeed(seed: number): nil
 	assert(seed ~= nil and type(seed) == "number", "Bad seed")
 	rawset(self, "Seed", seed)
 	self:_UpdateOctaves()
 	return nil
 end
 
-function Solver:Get(vec: Vector): number
+--- Retrieves the value for the noise solver at that vector.
+function NoiseSolver:Get(vec: Vector): number
 	vec = self.translateVector(vec)
 	return self:_Compile(vec, self:_Rand(vec))
 end
 
-function Solver:Clone(): NoiseSolver
-	local solver: NoiseSolver = Solver.new()
-	assert(getmetatable(solver) == Solver)
-	return Solver:_CopyConfiguration(solver, self)
+--- Creates a duplicate noise solver with the same configuration.
+function NoiseSolver:Clone(): NoiseSolver
+	local solver: NoiseSolver = NoiseSolver.new()
+	assert(getmetatable(solver) == NoiseSolver)
+	return NoiseSolver:_CopyConfiguration(solver, self)
 end
 
-function Solver:Set(
+--- Allows for the configuration of all properties at once with the exception of octaves.
+function NoiseSolver:Set(
 	seed: number?,
 	frequency: number?,
 	amplitude: number?,
@@ -273,7 +294,36 @@ function Solver:Set(
 	return nil
 end
 
-function Solver._new()
+--- @prop Seed number
+--- @within NoiseSolver
+--- Sets the number used to create pseudo-randomness. This allows two solvers with the same seed to generate the same value at the same vector.
+
+--- @prop Frequency number
+--- @within NoiseSolver
+--- The frequency of the solver. For a terrain map, increasing the frequency would appear to shrink things horizontally while maintaining the same elevation.
+
+--- @prop Amplitude number
+--- @within NoiseSolver
+--- The weight the internal alpha is multiplied by. For a terrain map this would stretch things vertically, making things taller.
+
+--- @prop Lacunarity number
+--- @within NoiseSolver
+--- The exponential percent change in frequency per layer of octave. A value of 2 with a frequency of 1 would have a frequency of 2 at the first octave and a frequency of 4 at the second.
+
+--- @prop Persistence number
+--- @within NoiseSolver
+--- The exponential percent change in amplitude per layer of octave. A value of 0.5 reduces added amplitude by 50% per layer, meaning with an amplitude of 1 the first octave has a max range of 0.5, and the second octave has a max range of 0.25.
+
+--- @prop Points {[number]: Vector}
+--- @within NoiseSolver
+--- The points used internally for proximity based maps like simplex, voronoi, and cellular.
+
+--- @prop Octaves {[number]: NoiseSolver}
+--- @within NoiseSolver
+--- Octaves operate here as layered solvers, providing more detail at different configurations and scales. For terrain, the base solver might be for mountains, while smaller octaves will provide hills.
+
+
+function NoiseSolver._new()
 	local self: {[string]: any} = {
 		Seed = 1,
 		Frequency = 1, --set either manually or by parent solver
@@ -285,12 +335,13 @@ function Solver._new()
 		SeparationLimit = 0,
 	}
 	
-	setmetatable(self, Solver)
+	setmetatable(self, NoiseSolver)
 
 	return self
 end
 
-function Solver.new(
+--- Constructs a noise solver.
+function NoiseSolver.new(
 	seed: number?,
 	frequency: number?,
 	amplitude: number?,
@@ -298,8 +349,8 @@ function Solver.new(
 	persistence: number?,
 	pointVectors: { [number]: any }?
 )
-	local solver: NoiseSolver = Solver._new()
-	assert(getmetatable(solver) == Solver)
+	local solver: NoiseSolver = NoiseSolver._new()
+	assert(getmetatable(solver) == NoiseSolver)
 	
 	solver:Set(
 		seed,
@@ -312,6 +363,6 @@ function Solver.new(
 	return solver
 end
 
-export type NoiseSolver = typeof(Solver._new())
+export type NoiseSolver = typeof(NoiseSolver._new())
 
-return Solver
+return NoiseSolver
