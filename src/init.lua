@@ -67,51 +67,52 @@ local Math = {
 	Noise = Noise,
 }
 
-type omniRound<T> = (v: T, interval: number) -> T
+type omniRound<T> = (v: T, interval: number?) -> T
 type roundable = number | Vector2 | Vector3 | Color3 | CFrame
-
---- Rounds the value to the nearest interval. For example 0.93567, at interval 0.05, would become 0.95
-function Math.round(v: roundable, interval: number?)
+local roundIt: omniRound<roundable>
+roundIt = function<T>(v: T, interval: number?): T
 	interval = interval or 1
 	assert(interval ~= nil)
 	if typeof(v) == "number" then
-		return math.round(v / interval) * interval
+		return math.round(v / interval) * interval :: any
 	elseif typeof(v) == "Vector2" then
-		local fX: roundable = Math.round(v.X, interval)
+		local fX: roundable = roundIt(v.X, interval)
 		assert(typeof(fX) == "number")
-		local fY: roundable = Math.round(v.Y, interval)
+		local fY: roundable = roundIt(v.Y, interval)
 		assert(typeof(fY) == "number")
-		return Vector2.new(fX, fY)
+		return Vector2.new(fX, fY) :: any
 	elseif typeof(v) == "Vector3" then
-		local fX: roundable = Math.round(v.X, interval)
+		local fX: roundable = roundIt(v.X, interval)
 		assert(typeof(fX) == "number")
-		local fY: roundable = Math.round(v.X, interval)
+		local fY: roundable = roundIt(v.X, interval)
 		assert(typeof(fY) == "number")
-		local fZ: roundable = Math.round(v.Z, interval)
+		local fZ: roundable = roundIt(v.Z, interval)
 		assert(typeof(fZ) == "number")
-		return Vector3.new(fX, fY, fZ)
+		return Vector3.new(fX, fY, fZ) :: any
 	elseif typeof(v) == "Color3" then
-		local fR: roundable = Math.round(v.R, interval)
+		local fR: roundable = roundIt(v.R, interval)
 		assert(typeof(fR) == "number")
-		local fG: roundable = Math.round(v.G, interval)
+		local fG: roundable = roundIt(v.G, interval)
 		assert(typeof(fG) == "number")
-		local fB: roundable = Math.round(v.B, interval)
+		local fB: roundable = roundIt(v.B, interval)
 		assert(typeof(fB) == "number")
-		return Color3.new(fR, fG, fB)
+		return Color3.new(fR, fG, fB) :: any
 	elseif typeof(v) == "CFrame" then
-		local pos: roundable = Math.round(v.Position, interval)
+		local pos: roundable = roundIt(v.Position, interval)
 		assert(typeof(pos) == "Vector3")
-		local xVec: roundable = Math.round(v.XVector, interval)
+		local xVec: roundable = roundIt(v.XVector, interval)
 		assert(typeof(xVec) == "Vector3")
-		local yVec: roundable = Math.round(v.YVector, interval)
+		local yVec: roundable = roundIt(v.YVector, interval)
 		assert(typeof(yVec) == "Vector3")
-		local zVec: roundable = Math.round(v.ZVector, interval)
+		local zVec: roundable = roundIt(v.ZVector, interval)
 		assert(typeof(zVec) == "Vector3")
-		return CFrame.fromMatrix(pos, xVec, yVec, zVec)
+		return CFrame.fromMatrix(pos, xVec, yVec, zVec) :: any
 	end
 	error("Bad variable")
 	return v
 end
+--- Rounds the value to the nearest interval. For example 0.93567, at interval 0.05, would become 0.95
+Math.round = roundIt
 
 --- @prop Geometry Geometry
 --- @within Math

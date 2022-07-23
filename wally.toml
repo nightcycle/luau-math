@@ -1,7 +1,7 @@
 [package]
 name = "nightcycle/luau-math"
 description = "A luau math library with various custom data types and utilities helpful in roblox dev."
-version = "1.0.1"
+version = "1.0.3"
 authors = ["CJ Oyer <coyer@nightcycle.us>"]
 realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
