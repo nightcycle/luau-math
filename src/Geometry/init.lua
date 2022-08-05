@@ -21,6 +21,9 @@ export type Axis = types.Axis
 export type Direction = types.Direction
 export type Line = types.Line
 export type Radian = types.Radian
+export type PerimeterSequence<V> = types.PerimeterSequence<V>
+
+local Earcut = require(script.Earcut)
 
 --- @class Geometry
 --- A long list of geometry related functions. Consider rounding your vectors to the nearest hundredth as the smallest difference can fail an equality test.
@@ -504,5 +507,124 @@ end
 function Geometry.getVolume(size: Vector3): number
 	return size.X * size.Y * size.Z
 end
+--- Creates a list of triangles out of a sequential list of Vector2 or 3s, including support for a list of holes created with similar vertex sequences.
+function Geometry.triangulate2D(vertices: PerimeterSequence<Vector2>, holes: {[number]: PerimeterSequence<Vector2>}?): {[number]: PerimeterSequence<Vector2>}
+	local triangles: {[number]: PerimeterSequence<Vector2>} = {}
+	holes = holes or {}
+	assert(holes ~= nil)
+	assert(vertices[1] ~= vertices[#vertices], "Perimeter has a duplicate index")
+	for i, hole: PerimeterSequence<Vector2> in ipairs(holes) do
+		assert(vertices[1] ~= vertices[#vertices], "Hole "..tostring(i).." has a duplicate ending index")
+	end
+	local earcutData: {	
+		[number]: {
+			[number]: {
+				[number]: number
+			}
+		}
+	} = {}
+
+	local function insertPerimeterSequence(seq: PerimeterSequence<Vector2>): nil
+		local vertData = {}
+		for i, v2: Vector2 in ipairs(seq) do
+			local vertTabl = {
+				[1] = v2.X,
+				[2] = v2.Y,
+			}
+			vertData[i] = vertTabl
+		end
+		table.insert(earcutData, vertData)
+		return nil
+	end
+	insertPerimeterSequence(vertices)
+	for i, holeSequence: PerimeterSequence<Vector2> in ipairs(holes) do
+		insertPerimeterSequence(holeSequence)
+	end
+
+	local earcutVertices: {[number]: number} = {}
+	local holeIndeces: {[number]: number} = {}
+	local earcutMax: {[number]: number} = {}
+	local earcutMin: {[number]: number} = {}
+	local holeIndex = 1
+	local dim = 2
+
+	for i = 1, #earcutData do --shape
+		for j = 1, #earcutData[i] do --vertex
+			for d = 1, dim do
+				earcutMax[d] = math.max(earcutMax[d] or -math.huge, earcutData[i][j][d])
+				earcutMin[d] = math.min(earcutMin[d] or math.huge, earcutData[i][j][d])
+				table.insert(earcutVertices, earcutData[i][j][d])
+			end
+		end
+		if i > 1 then
+			holeIndex = holeIndex + #earcutData[i - 1]
+			table.insert(holeIndeces, holeIndex)
+		end
+	end
+
+
+	local rawTriangles: {[number]: number} = Earcut(earcutData, holeIndeces, 2)
+	for i = 1, #rawTriangles, 3 do
+		local aRaw, bRaw, cRaw = rawTriangles[i], rawTriangles[i+1], rawTriangles[i+2]
+		assert(aRaw ~= nil and bRaw ~= nil and cRaw ~= nil)
+
+		local aIndex = (aRaw * 2) + 1
+		local bIndex = (bRaw * 2) + 1
+		local cIndex = (cRaw * 2) + 1
+
+		local triangle: PerimeterSequence<Vector2> = {
+			Vector2.new(earcutVertices[aIndex], earcutVertices[aIndex + 1]),
+			Vector2.new(earcutVertices[bIndex], earcutVertices[bIndex + 1]),
+			Vector2.new(earcutVertices[cIndex], earcutVertices[cIndex + 1]),
+		}
+		table.insert(triangles, triangle)	
+	end
+	
+	return triangles
+end
+
+--- Flattens a list of Vector3s into Vector2s using the zAxis
+function Geometry.flattenPerimeterSequence(sequence: PerimeterSequence<Vector3>, origin: CFrame): (PerimeterSequence<Vector2>, {[Vector2]: Vector3})
+	local base:  CFrame = origin:Inverse() 
+
+	local finalVertices: {[number]: Vector2} = {}
+	local reference: {[Vector2]: Vector3} = {}
+	for i, vec: Vector3 in ipairs(sequence) do
+		local offset: CFrame = base*CFrame.new(vec)
+		finalVertices[i] = Vector2.new(offset.X, offset.Y)
+		reference[finalVertices[i]] = vec
+	end
+	return finalVertices, reference
+end
+
+--- Triangulates a list of 3d sequential points similar to triangulate2D.
+function Geometry.triangulate3D<V>(origin: CFrame, perimeter: PerimeterSequence<Vector3>, holes: {[number]: PerimeterSequence<Vector3>}?): {[number]: PerimeterSequence<Vector3>}
+	local holeV2Sequences = {}
+	local reference = {}
+	for i, holeSeq in ipairs(holes or {}) do
+		local holeReference
+		holeV2Sequences[i], holeReference = Geometry.flattenPerimeterSequence(holeSeq, origin)
+		for i, vec: Vector2 in ipairs(holeV2Sequences[i]) do
+			reference[vec] = holeReference[vec]
+		end
+	end
+	local perimeterV2, perimeterReference = Geometry.flattenPerimeterSequence(perimeter, origin)
+	for i, vec: Vector2 in ipairs(perimeterV2) do
+		reference[vec] = perimeterReference[vec]
+	end
+
+	local triangles2D = Geometry.triangulate2D(perimeterV2, holeV2Sequences)
+	local triangles3D: {[number]: PerimeterSequence<Vector3>} = {}
+	for i, triangle2D: {[number]: Vector2} in ipairs(triangles2D) do
+		local triangle3D: {[number]: Vector3} = {}
+		for d, vertex2D: Vector2 in ipairs(triangle2D) do
+			triangle3D[d] = reference[vertex2D]
+		end
+		triangles3D[i] = triangle3D
+	end
+	return triangles3D
+end
+
+
 
 return Geometry

@@ -22,18 +22,20 @@ function sequence(
 	local envelopes = {}
 
 	local function eval(seq: ColorSequence | NumberSequence, keyT: number): any
+		local keypoints: {[number]: any} = seq.Keypoints
 		if keyT == 0 then
-			return seq.Keypoints[1].Value
+			return keypoints[1].Value
 		end
 		if keyT == 1 then
-			return seq.Keypoints[#seq.Keypoints].Value
+			return keypoints[#seq.Keypoints].Value
 		end
 		-- Step through each sequential pair of keypoints and see if alpha
 		-- lies between the points' time values.
 		local result
-		for i = 1, #seq.Keypoints - 1 do
-			local this = seq.Keypoints[i]
-			local next = seq.Keypoints[i + 1]
+		for i = 1, #keypoints - 1 do
+
+			local this = keypoints[i]
+			local next = keypoints[i + 1]
 			if keyT >= this.Time and keyT < next.Time then
 				-- Calculate how far alpha lies between the points
 				local a = (keyT - this.Time) / (next.Time - this.Time)

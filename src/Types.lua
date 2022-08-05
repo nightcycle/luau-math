@@ -45,6 +45,12 @@ export type Surface = {
 	Lines: { [number]: Line },
 }
 
+--- @type PerimeterSequence {[number]: Vector2 | Vector3}
+--- @within Math
+--- A string of vertices usually created for the purpose of solving a perimeter. The final point should be different from first point.
+
+export type PerimeterSequence<V> = {[number]: V}
+
 --- @type Radian number
 --- @within Math
 --- A measurement of rotation where 2 pi is equal to a full revolution

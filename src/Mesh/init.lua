@@ -56,6 +56,42 @@ function Mesh.getSurfaces(basePart: BasePart): {[Enum.NormalId]: Surface}
 	return solver.getSurfaces(basePart)
 end
 
+function Mesh.renderTriangle(a: Point, b: Point, c: Point, thickness: number): (WedgePart, WedgePart)
+	thickness = thickness or 0
+	
+	local w1 = Instance.new("WedgePart")
+	w1.Anchored = true
+	w1.TopSurface = Enum.SurfaceType.Smooth
+	w1.BottomSurface = Enum.SurfaceType.Smooth
+	local w2 = w1:Clone()
+	
+	-- Render the 3D triangle
+	local ab, ac, bc = b - a, c - a, c - b
+	local abd, acd, bcd = ab:Dot(ab), ac:Dot(ac), bc:Dot(bc)
+	
+	if (abd > acd and abd > bcd) then
+		c, a = a, c
+	elseif (acd > bcd and acd > abd) then
+		a, b = b, a
+	end
+	
+	ab, ac, bc = b - a, c - a, c - b
+	
+	local right = ac:Cross(ab).Unit
+	local up = bc:Cross(right).Unit
+	local back = bc.Unit
+	
+	local height = math.abs(ab:Dot(up))
+	
+	w1.Size = Vector3.new(thickness, height, math.abs(ab:Dot(back)))
+	w1.CFrame = CFrame.fromMatrix((a + b)/2, right, up, back)
+
+	w2.Size = Vector3.new(thickness, height, math.abs(ac:Dot(back)))
+	w2.CFrame = CFrame.fromMatrix((a + c)/2, -right, up, -back)
+
+	return w1, w2
+end
+
 --- Performs a greedy mesh style simplification on a 3d table of boolean values
 function Mesh.solveGreedyMesh(grid: { [Vector3]: boolean })
 	-- print("Grid", grid)

@@ -14,16 +14,19 @@ export type Alpha = number
 export type Integer = number
 export type Float = number
 export type Double = number
-
+export type PerimeterSequence<T> = types.PerimeterSequence<T>
 
 local Geometry = require(script:WaitForChild("Geometry"))
 local Mesh = require(script:WaitForChild("Mesh"))
 local Algebra = require(script:WaitForChild("Algebra"))
 local Noise = require(script:WaitForChild("Noise"))
+local Pathfind = require(script:WaitForChild("Pathfind"))
+
 export type Vector = Algebra.Vector
 export type Matrix = Algebra.Matrix
 export type NoiseSolver = Noise.NoiseSolver
 export type BezierSolver<T> = Algebra.BezierSolver<T>
+export type Pathfinder<T> = Pathfind.Pathfinder<T>
 
 --- @class Math
 --- A basic utility for your everyday Roblox dev math needs. It also includes all native lua math functions. All types included in API are exported for easy reuse in a wider project.
@@ -65,6 +68,7 @@ local Math = {
 	Mesh = Mesh,
 	Algebra = Algebra,
 	Noise = Noise,
+	Pathfind = Pathfind,
 }
 
 type omniRound<T> = (v: T, interval: number?) -> T
@@ -129,6 +133,10 @@ Math.round = roundIt
 --- @prop Noise Noise
 --- @within Math
 --- Provides access to the noise library
+
+--- @prop Pathfind Pathfind
+--- @within Math
+--- Provides access to the noise pathfinder
 
 Math.__index = Math
 
