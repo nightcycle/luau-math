@@ -134,9 +134,12 @@ Math.round = roundIt
 --- @within Math
 --- Provides access to the noise library
 
---- @prop Pathfind Pathfind
+--- @function Pathfind
 --- @within Math
---- Provides access to the noise pathfinder
+--- @param nodeData {[Vector]: {[number]: Vector}}
+--- @return (start: Vector, finish: Vector) -> {[number]: Vector}
+--- Takes a node network defined as a dictionary of vectors as keys, set to connection lists, then returns a Pathfinder that can be used to generate a list of steps between the two points. Pathfinder caches previous solutions for speed. Works with native Roblox Vector2 and Vector3s as well.
+
 
 Math.__index = Math
 

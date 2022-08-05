@@ -56,6 +56,7 @@ function Mesh.getSurfaces(basePart: BasePart): {[Enum.NormalId]: Surface}
 	return solver.getSurfaces(basePart)
 end
 
+--- returns two wedgeparts created to fit on all three points. 
 function Mesh.renderTriangle(a: Point, b: Point, c: Point, thickness: number): (WedgePart, WedgePart)
 	thickness = thickness or 0
 	
