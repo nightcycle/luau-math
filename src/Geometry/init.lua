@@ -364,7 +364,7 @@ function Geometry.getFarthestPointInList(point: Point, list: { [number]: Point }
 end
 
 --- Finds the closest point on the line to the provided point.
-function Geometry.getClosestPointOnLine(point: Point, line: Line)
+function Geometry.getClosestPointOnLine(point: Point, line: Line): Point
 	local start: Vertex = line[1]
 	local fin: Vertex = line[2]
 
@@ -372,7 +372,22 @@ function Geometry.getClosestPointOnLine(point: Point, line: Line)
 
 	local adjDist: number = math.min(math.cos(angleS) * (point - start).Magnitude, (start - fin).Magnitude)
 
-	return start + (fin - start).Unit * adjDist
+	local final = start + (fin - start).Unit * adjDist
+	if final ~= final then return point end
+
+
+	local centerPos = line[1]
+	local otherPos = line[2]
+
+	local normal: Vector3 = (otherPos - centerPos).Unit
+	local pointNormal: Vector3 = (final - otherPos).Unit
+	if normal:Dot(pointNormal) > 0 then
+		final = centerPos
+	elseif (otherPos - centerPos).Magnitude < (final - centerPos).Magnitude then
+		final = otherPos
+	end
+
+	return final
 end
 
 --- Finds the line that comes closest to the point. Chooses arbitrarily when lines are equidistant.
@@ -547,7 +562,7 @@ function Geometry.triangulate2D(vertices: PerimeterSequence<Vector2>, holes: {[n
 	local earcutMin: {[number]: number} = {}
 	local holeIndex = 1
 	local dim = 2
-
+	
 	for i = 1, #earcutData do --shape
 		for j = 1, #earcutData[i] do --vertex
 			for d = 1, dim do
@@ -562,8 +577,8 @@ function Geometry.triangulate2D(vertices: PerimeterSequence<Vector2>, holes: {[n
 		end
 	end
 
+	local rawTriangles: {[number]: number} = Earcut(earcutVertices, holeIndeces, 2)
 
-	local rawTriangles: {[number]: number} = Earcut(earcutData, holeIndeces, 2)
 	for i = 1, #rawTriangles, 3 do
 		local aRaw, bRaw, cRaw = rawTriangles[i], rawTriangles[i+1], rawTriangles[i+2]
 		assert(aRaw ~= nil and bRaw ~= nil and cRaw ~= nil)
@@ -579,7 +594,6 @@ function Geometry.triangulate2D(vertices: PerimeterSequence<Vector2>, holes: {[n
 		}
 		table.insert(triangles, triangle)	
 	end
-	
 	return triangles
 end
 
@@ -605,12 +619,14 @@ function Geometry.triangulate3D<V>(origin: CFrame, perimeter: PerimeterSequence<
 		local holeReference
 		holeV2Sequences[i], holeReference = Geometry.flattenPerimeterSequence(holeSeq, origin)
 		for i, vec: Vector2 in ipairs(holeV2Sequences[i]) do
-			reference[vec] = holeReference[vec]
+			reference[vec.X] = reference[vec.X] or {}
+			reference[vec.X][vec.Y] = holeReference[vec]
 		end
 	end
 	local perimeterV2, perimeterReference = Geometry.flattenPerimeterSequence(perimeter, origin)
 	for i, vec: Vector2 in ipairs(perimeterV2) do
-		reference[vec] = perimeterReference[vec]
+		reference[vec.X] = reference[vec.X] or {}
+		reference[vec.X][vec.Y] = perimeterReference[vec]
 	end
 
 	local triangles2D = Geometry.triangulate2D(perimeterV2, holeV2Sequences)
@@ -618,13 +634,57 @@ function Geometry.triangulate3D<V>(origin: CFrame, perimeter: PerimeterSequence<
 	for i, triangle2D: {[number]: Vector2} in ipairs(triangles2D) do
 		local triangle3D: {[number]: Vector3} = {}
 		for d, vertex2D: Vector2 in ipairs(triangle2D) do
-			triangle3D[d] = reference[vertex2D]
+			triangle3D[d] = reference[vertex2D.X][vertex2D.Y]
 		end
 		triangles3D[i] = triangle3D
 	end
 	return triangles3D
 end
 
+--- Gets the angle at the radius that expands to a full side. A hexagon would return 60 degres (in radians).
+function Geometry.getRegularPolygonInnerAngle(sides: number): Radian
+	assert(sides > 2, "You can't have a 2-sided polygon") --fought urge to include "idiot" in this, as I'm sure I will do this at some point.
+	return math.rad(360)/sides
+end
 
+--- Gets the angle at the vertex. A hexagon would return 120 degres (in radians).
+function Geometry.getRegularPolygonVertexAngle(sides: number): Radian
+	assert(sides > 2, "You can't have a 2-sided polygon")
+	local innerAngle = Geometry.getRegularPolygonInnerAngle(sides)
+	return 2*(math.rad(180) - (innerAngle/2))
+end
+
+--- Gets the distance from the center to the center of an edge.
+function Geometry.getRegularPolygonEdgeCenterDistance(sides: number, radius: number): number
+	assert(radius > 0, "Radius needs to be larger than 0")
+	assert(sides > 2, "You can't have a 2-sided polygon")
+	local innerAngle = Geometry.getRegularPolygonInnerAngle(sides)
+	local hyp = radius
+	return math.cos(innerAngle/2)*hyp
+end
+
+--- Gets the distance from the center to the center of an edge.
+function Geometry.getRegularPolygonSideLength(sides: number, radius: number): number
+	assert(radius > 0, "Radius needs to be larger than 0")
+	assert(sides > 2, "You can't have a 2-sided polygon")
+	local innerAngle = Geometry.getRegularPolygonInnerAngle(sides)
+	local hyp = radius
+	return 2*math.sin(innerAngle/2)*hyp
+end
+
+--- Gets the perimeter of the polygon.
+function Geometry.getRegularPolygonPerimeter(sides: number, radius: number): number
+	assert(radius > 0, "Radius needs to be larger than 0")
+	assert(sides > 2, "You can't have a 2-sided polygon")
+	local edgeLength = Geometry.getRegularPolygonSideLength(sides, radius)
+	return edgeLength * sides
+end
+
+--- Gets the area of the polygon.
+function Geometry.getRegularPolygonArea(sides: number, radius: number): number
+	local edgeLength = Geometry.getRegularPolygonEdgeCenterDistance(sides, radius)
+	local sideLength = Geometry.getRegularPolygonSideLength(sides, radius)
+	return edgeLength * sideLength * sides
+end
 
 return Geometry
