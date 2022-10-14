@@ -36,7 +36,7 @@ function getSurfaceCFrame(part: Part, lnormal: Normal): CFrame
 end
 
 function getWorldPosition(part: BasePart, offset: Vector3): Point
-	return (part.CFrame * CFrame.new(offset * Vector3.new(-1, 1, 1))).p
+	return (part.CFrame * CFrame.new(offset * Vector3.new(-1, 1, 1))).Position
 end
 
 local module = {}

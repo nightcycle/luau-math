@@ -3,40 +3,45 @@ Pathfinder.__index = {}
 
 export type Pathfinder<T> = (start:T, finish:T) -> ({[number]: T})
 
---- @class Noise
+--- @class PathFinder
 --- A library of NoiseSolvers that combined can allow a developer to create many procedurally generated assets and mechanics.
 
-
-return function<T>(network: {[T]: {[number]: T}}): Pathfinder<T>
+return function<T>(network: {[T]: {[number]: T}}, scoreFunction: ((a: T, b: T) -> number)): Pathfinder<T>
+	
 	local weightedNetwork: {[T]: {[T]: number}} = {}
 	for s, connections in pairs(network) do
-		weightedNetwork[s] = {}
+		
 		for i, d in ipairs(connections) do
-			weightedNetwork[s][d] = (d-s).Magnitude
+
+			weightedNetwork[d] = weightedNetwork[d] or {}
+			weightedNetwork[d][s] = scoreFunction(s, d)
 		end
 	end
 
-	-- returns a dictionary of nodes with their path distances to source
-	local function getScoredDistances(source: T): {[T]: number}
+	-- returns a dictionary of nodes with their path distances to goal
+	local function getScoredDistances(goal: T): {[T]: number}
 		local distances: {[T]: number} = {}
-		distances[source] = 0
+		distances[goal] = 0
 
 		local queue = {}
 		for n, _ in pairs(weightedNetwork) do
-			if n ~= source then
+			if n ~= goal then
 				distances[n] = math.huge
 				table.insert(queue, n)
 			end
 		end
-		local function scoreStep(node: T, prevDist)
-			if distances[node] > prevDist then
+
+		local function scoreStep(node: T, prevDist: number)
+			if node == goal then return end
+			if distances[node] and distances[node] > prevDist then
 				distances[node] = prevDist
 				for n, dist in pairs(weightedNetwork[node]) do
 					scoreStep(n, prevDist+dist)
 				end
 			end
 		end
-		for n, dist in pairs(weightedNetwork[source]) do
+
+		for n: T, dist: number in pairs(weightedNetwork[goal]) do
 			scoreStep(n, dist)
 		end
 		return distances
@@ -60,20 +65,22 @@ return function<T>(network: {[T]: {[number]: T}}): Pathfinder<T>
 			end
 			local distances: {[T]: number} = distanceCache[finish]
 
-			--assembles the path by following the lowest distance scoring connections to the source.
+			--assembles the path by following the lowest distance scoring connections to the goal.
 			local function assemblePath(node: T)
 				table.insert(path, node)
 				table.insert(pathCache[start][finish], node)
 				if node == finish then return end
 				local closestDist = math.huge
 				local closestNode = nil
-				for i, otherNode: T in ipairs(network[node]) do
+				for i, otherNode: T in ipairs(network[node] or {}) do
 					local otherDist = distances[otherNode]
 					if otherDist < closestDist then
 						closestNode = otherNode
 					end
 				end
-				assemblePath(closestNode)
+				if closestNode then
+					assemblePath(closestNode)
+				end
 			end
 
 			pathCache[start][finish] = {}
@@ -84,6 +91,7 @@ return function<T>(network: {[T]: {[number]: T}}): Pathfinder<T>
 			for i, node in ipairs(path) do
 				inversePath[#path-i+1] = node
 			end
+			pathCache[finish] = pathCache[finish] or {}
 			pathCache[finish][start] = inversePath
 		end
 		return path

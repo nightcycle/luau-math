@@ -59,7 +59,7 @@ function NoiseSolver:_SetSeparationLimit(): nil
 		local cDist = math.huge
 		for i, point: Vector in ipairs(points) do
 			assert(getmetatable(point) == Vector)
-			if Vector.__eq(point, p) then
+			if not Vector.__eq(point, p) then
 				local offset: Vector = Vector.__sub(point, p)
 				local dist: number = offset.Magnitude
 				if dist and (not closest or dist < cDist) then

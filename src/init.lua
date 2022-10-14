@@ -21,12 +21,113 @@ local Mesh = require(script:WaitForChild("Mesh"))
 local Algebra = require(script:WaitForChild("Algebra"))
 local Noise = require(script:WaitForChild("Noise"))
 local Pathfind = require(script:WaitForChild("Pathfind"))
+local Physics = require(script:WaitForChild("Physics"))
 
 export type Vector = Algebra.Vector
 export type Matrix = Algebra.Matrix
 export type NoiseSolver = Noise.NoiseSolver
 export type BezierSolver<T> = Algebra.BezierSolver<T>
 export type Pathfinder<T> = Pathfind.Pathfinder<T>
+
+export type Newton = Physics.Newton
+export type MetersPerSecondSquared = Physics.MetersPerSecondSquared
+export type LightYear = Physics.LightYear
+export type LightMinute = Physics.LightMinute
+export type LightSecond = Physics.LightSecond
+export type AstronomicalUnit = Physics.AstronomicalUnit
+export type League = Physics.League
+export type Mile = Physics.Mile
+export type Kilometer = Physics.Kilometer
+export type Meter = Physics.Meter
+export type Feet = Physics.Feet
+export type Centimeter = Physics.Centimeter
+export type Millimeter = Physics.Millimeter
+export type Micrometer = Physics.Micrometer
+export type Nanometer = Physics.Nanometer
+export type Picometer = Physics.Picometer
+export type Planck = Physics.Planck
+export type Millenia = Physics.Millenia
+export type Century = Physics.Century
+export type Decade = Physics.Decade
+export type Year = Physics.Year
+export type Week = Physics.Week
+export type Day = Physics.Day
+export type Hour = Physics.Hour
+export type Minute = Physics.Minute
+export type Second = Physics.Second
+export type Millisecond = Physics.Millisecond
+export type Microsecond = Physics.Microsecond
+export type Nanosecond = Physics.Nanosecond
+export type Picosecond = Physics.Picosecond
+export type Ounce = Physics.Ounce
+export type Pound = Physics.Pound
+export type Stone = Physics.Stone 
+export type Ton = Physics.Ton
+export type Kiloton = Physics.Kiloton
+export type Megaton = Physics.Megaton
+export type Gram = Physics.Gram
+export type Kilogram = Physics.Kilogram
+export type Milligram = Physics.Milligram
+export type Tonne = Physics.Tonne
+export type Kilotonne = Physics.Kilotonne
+export type Megatonne = Physics.Megatonne
+export type MetersPerSecond = Physics.MetersPerSecond
+export type KilometersPerHour = Physics.KilometersPerHour
+export type Knot = Physics.Knot
+export type FeetPerSecond = Physics.FeetPerSecond
+export type MilesPerHour = Physics.MilesPerHour
+export type Fahrenheit = Physics.Fahrenheit
+export type Celsius = Physics.Celsius
+export type Kelvin = Physics.Kelvin
+export type Joule = Physics.Joule
+export type Kilojoule = Physics.Kilojoule
+export type Megajoule = Physics.Megajoule
+export type Calorie = Physics.Calorie
+export type Kilocalorie = Physics.Kilocalorie
+export type BritishThermalUnit = Physics.BritishThermalUnit
+export type Gigajoule = Physics.Gigajoule
+export type Kilowatt = Physics.Kilowatt
+export type Watt = Physics.Watt
+export type Megawatt = Physics.Megawatt
+export type Gigawatt = Physics.Gigawatt
+export type Horsepower = Physics.Horsepower
+export type FootPoundsPerMinute = Physics.FootPoundsPerMinute
+export type Megapascal = Physics.Megapascal
+export type Kilopascal = Physics.Kilopascal
+export type Pascal = Physics.Pascal
+export type Atmosphere = Physics.Atmosphere
+export type Bar = Physics.Bar
+export type Millibar = Physics.Millibar
+export type PoundsPerSquareInch = Physics.PoundsPerSquareInch
+export type KilogramMetersPerSecond = Physics.KilogramMetersPerSecond
+export type Ohm = Physics.Ohm
+export type Volt = Physics.Volt
+export type Amp = Physics.Amp
+export type Liter = Physics.Liter
+export type Milliliter = Physics.Milliliter
+export type Kiloliter = Physics.Kiloliter
+export type Cup = Physics.Cup
+export type Pint = Physics.Pint
+export type Quart = Physics.Quart
+export type Gallon = Physics.Gallon
+export type CubicFeet = Physics.CubicFeet
+export type CubicInch = Physics.CubicInch
+export type CubicMeter = Physics.CubicMeter
+export type GramPerCubicCentimeter = Physics.GramPerCubicCentimeter
+export type KilogramsPerCubicMeter = Physics.KilogramsPerCubicMeter
+export type GramPerMilliliter = Physics.GramPerMilliliter
+export type SquareMeter = Physics.SquareMeter
+export type SquareCentimeter = Physics.SquareCentimeter
+export type SquareMillimeter = Physics.SquareMillimeter
+export type SquareFeet = Physics.SquareFeet
+export type SquareInch = Physics.SquareInch
+export type SquareYard = Physics.SquareYard
+export type SquareKilometer = Physics.SquareKilometer
+export type SquareMile = Physics.SquareMile
+export type Acre = Physics.Acre
+export type Hectare = Physics.Hectare
+export type Mol = Physics.Mol
+export type JoulesPerKelvin = Physics.JoulesPerKelvin
 
 --- @class Math
 --- A basic utility for your everyday Roblox dev math needs. It also includes all native lua math functions. All types included in API are exported for easy reuse in a wider project.
@@ -69,6 +170,7 @@ local Math = {
 	Algebra = Algebra,
 	Noise = Noise,
 	Pathfind = Pathfind,
+	Physics = Physics,
 }
 
 type omniRound<T> = (v: T, interval: number?) -> T
@@ -139,7 +241,6 @@ Math.round = roundIt
 --- @param nodeData {[Vector]: {[number]: Vector}}
 --- @return (start: Vector, finish: Vector) -> {[number]: Vector}
 --- Takes a node network defined as a dictionary of vectors as keys, set to connection lists, then returns a Pathfinder that can be used to generate a list of steps between the two points. Pathfinder caches previous solutions for speed. Works with native Roblox Vector2 and Vector3s as well.
-
 
 Math.__index = Math
 

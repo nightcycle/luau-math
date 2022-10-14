@@ -201,7 +201,7 @@ function Mesh.getBoundingBoxAtCFrame(orientation: CFrame, parts: { [number]: Bas
 	for i, part in ipairs(parts) do
 		local partVertices = Mesh.getVertices(part)
 		for j, v3 in ipairs(partVertices) do
-			vertices[(orientation:Inverse() * CFrame.new(v3)).p] = true
+			vertices[(orientation:Inverse() * CFrame.new(v3)).Position] = true
 		end
 	end
 	-- print(vertices)
