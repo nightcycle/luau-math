@@ -329,6 +329,28 @@ function Physics.getPower(
 	return work / time
 end
 
+
+function Physics.getPowerFromForceAndVelocity(
+	force: Newton,
+	velocity: MetersPerSecond
+): Watt
+	return force * velocity
+end
+
+function Physics.getVelocityFromPowerAndForce(
+	force: Newton,
+	power: Watt
+): MetersPerSecond
+	return power / force
+end
+
+function Physics.getForceFromPowerAndVelocity(
+	velocity: MetersPerSecond,
+	power: Watt
+): Newton
+	return power / velocity
+end
+
 function Physics.getWorkFromPowerAndTime(
 	power: Watt,
 	time: Second

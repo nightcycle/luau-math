@@ -21,7 +21,7 @@ export type FeetPerSecond = number
 export type MilesPerHour = number
 
 -- Constants
-local KPH_IN_MPS = 1/3.6
+local KPH_IN_MPS = 3.6
 local MPH_IN_MPS = 2.23694
 local FPS_IN_MPS = 3.28084
 local KNOTS_IN_MPS = 1.94384
